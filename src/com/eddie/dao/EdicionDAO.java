@@ -13,8 +13,8 @@ public interface EdicionDAO {
 	
 	 List<Edicion> findByIdsJuego(Connection conexion,List<Integer> ids) throws DataException;
 	
-	 Edicion create(Connection conexion,Edicion e) throws DataException;
+	 boolean create(Connection conexion,Edicion edicion) throws DataException;
 	
-	 boolean update(Connection conexion,Edicion e) throws DataException;
+	 boolean update(Connection conexion,Edicion edicion) throws DataException;
 	
 }

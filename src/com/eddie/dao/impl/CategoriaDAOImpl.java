@@ -38,11 +38,11 @@ public class CategoriaDAOImpl implements CategoriaDAO {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                categoria = loadNext(resultSet);
+                categoria = new Categoria();
+                return loadNext(resultSet, categoria);
             } else {
                 throw new InstanceNotFoundException("Error " + id + " id introducido incorrecto", Categoria.class.getName());
             }
-            return categoria;
         } catch (SQLException ex) {
             logger.error(ex.getMessage(), ex);
             throw new DataException(ex);
@@ -72,8 +72,8 @@ public class CategoriaDAOImpl implements CategoriaDAO {
 
             categorias = new ArrayList<>();
             while (resultSet.next()) {
-                categoria = loadNext(resultSet);
-                categorias.add(categoria);
+                categoria = new Categoria();
+                categorias.add(loadNext(resultSet,categoria));
             }
             return categorias;
         } catch (SQLException ex) {
@@ -111,8 +111,8 @@ public class CategoriaDAOImpl implements CategoriaDAO {
             // Recupera la pagina de resultados
             categorias = new ArrayList<>();
             while (resultSet.next()) {
-                categoria = loadNext(resultSet);
-                categorias.add(categoria);
+                categoria = new Categoria();
+                categorias.add(loadNext(resultSet, categoria));
             }
             return categorias;
         } catch (SQLException e) {
@@ -125,8 +125,7 @@ public class CategoriaDAOImpl implements CategoriaDAO {
     }
 
 
-    public Categoria loadNext(ResultSet resultSet) throws SQLException {
-        Categoria categoria = new Categoria();
+    public Categoria loadNext(ResultSet resultSet, Categoria categoria) throws SQLException {
         categoria.setNombre(resultSet.getString("nombre"));
         categoria.setIdCategria(resultSet.getInt("id_categoria"));
         return categoria;

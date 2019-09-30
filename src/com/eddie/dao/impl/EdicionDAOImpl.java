@@ -40,11 +40,11 @@ public class EdicionDAOImpl implements EdicionDAO{
 			resultSet=preparedStatement.executeQuery();
 			
 			if(resultSet.next()){
-				edicion = loadNext(resultSet);
+				edicion=new Edicion();
+				return loadNext(resultSet,edicion);
 			}else {
 				throw new InstanceNotFoundException("Error "+id+" id introducido incorrecto", Edicion.class.getName());
 			}
-			return edicion;
 		}catch (SQLException ex) {
 			logger.error(ex.getMessage(),ex);
 			throw new DataException(ex);
@@ -74,8 +74,8 @@ public class EdicionDAOImpl implements EdicionDAO{
 
 			ediciones=new ArrayList<>();
 			while(resultSet.next()){
-				edicion = loadNext(resultSet);
-				ediciones.add(edicion);
+				edicion=new Edicion();
+				ediciones.add(loadNext(resultSet,edicion));
 			}
 			return ediciones;
 		}catch (SQLException ex) {
@@ -109,8 +109,8 @@ public class EdicionDAOImpl implements EdicionDAO{
 			
 			ediciones=new ArrayList<>();
 			while(resultSet.next()){
-				edicion=loadNext(resultSet);
-				ediciones.add(edicion);
+				edicion=new Edicion();
+				ediciones.add(loadNext(resultSet,edicion));
 			}
 			return ediciones;
 		}catch (SQLException ex) {
@@ -122,7 +122,7 @@ public class EdicionDAOImpl implements EdicionDAO{
 		}
 	}
 	@Override
-	public Edicion create(Connection conexion,Edicion edicion) throws DataException {
+	public boolean create(Connection conexion,Edicion edicion) throws DataException {
 		PreparedStatement preparedStatement=null;
 		ResultSet resultSet=null;
 		StringBuilder query;
@@ -132,11 +132,11 @@ public class EdicionDAOImpl implements EdicionDAO{
 			query.append("values (?,?,?,?)");
 			
 			preparedStatement=conexion.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
-
-			preparedStatement.setInt(1,edicion.getIdJuego());
-			preparedStatement.setInt(2, edicion.getIdFormato());
-			preparedStatement.setInt(3, edicion.getIdTipoEdicion());
-			preparedStatement.setDouble(4, edicion.getPrecio());
+			int i = 1;
+			preparedStatement.setInt(i++,edicion.getIdJuego());
+			preparedStatement.setInt(i++, edicion.getIdFormato());
+			preparedStatement.setInt(i++, edicion.getIdTipoEdicion());
+			preparedStatement.setDouble(i, edicion.getPrecio());
 
 			int insertRow=preparedStatement.executeUpdate();
 			
@@ -148,9 +148,9 @@ public class EdicionDAOImpl implements EdicionDAO{
 				Integer idEdicion=resultSet.getInt(1);
 				edicion.setId(idEdicion);
 			}else {
-				throw new DataException("Problemas al autogenerar primary key");
+				return false;
 			}
-			return edicion;
+			return true;
 		}catch (SQLException ex) {
 			logger.error(ex.getMessage(),ex);
 			throw new DataException(ex);
@@ -196,7 +196,7 @@ public class EdicionDAOImpl implements EdicionDAO{
 
 			int updatedRows = preparedStatement.executeUpdate();
 
-			return updatedRows != 0 && updatedRows <= 1;
+			return updatedRows == 1;
 		} catch (SQLException se) {
 			logger.error(se.getMessage(),se);
 			throw new DataException(se);    
@@ -206,14 +206,12 @@ public class EdicionDAOImpl implements EdicionDAO{
 	
 	}
 
-	public Edicion loadNext(ResultSet resultSet)throws SQLException{
-		Edicion edicion=new Edicion();
+	public Edicion loadNext(ResultSet resultSet,Edicion edicion)throws SQLException{
 		edicion.setId(resultSet.getInt("id_edicion"));
 		edicion.setIdJuego(resultSet.getInt("id_juego"));
 		edicion.setIdFormato(resultSet.getInt("id_formato"));
 		edicion.setIdTipoEdicion(resultSet.getInt("id_tipo_edicion"));
 		edicion.setPrecio(resultSet.getDouble("precio"));
-		
 		return edicion;
 	}
 }

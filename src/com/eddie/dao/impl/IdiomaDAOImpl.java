@@ -21,7 +21,7 @@ public class IdiomaDAOImpl implements IdiomaDAO {
 
     @Override
     public Idioma findById(Connection conexion, String id, String idiomaS) throws DataException {
-        Idioma idioma;
+        Idioma idioma = new Idioma();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         StringBuilder query;
@@ -38,11 +38,10 @@ public class IdiomaDAOImpl implements IdiomaDAO {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                idioma = loadNext(resultSet);
+                return loadNext(resultSet, idioma);
             } else {
                 throw new InstanceNotFoundException("Error " + id + " id introducido incorrecto", Idioma.class.getName());
             }
-            return idioma;
         } catch (SQLException ex) {
             logger.error(ex.getMessage(), ex);
             throw new DataException(ex);
@@ -54,7 +53,7 @@ public class IdiomaDAOImpl implements IdiomaDAO {
 
     @Override
     public List<Idioma> findAll(Connection conexion, String idiomaS) throws DataException {
-        Idioma idioma;
+        Idioma idioma = new Idioma();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
         StringBuilder query;
@@ -72,8 +71,7 @@ public class IdiomaDAOImpl implements IdiomaDAO {
 
 			idiomas = new ArrayList<>();
             while (resultSet.next()) {
-                idioma = loadNext(resultSet);
-                idiomas.add(idioma);
+                idiomas.add(loadNext(resultSet, idioma));
             }
             return idiomas;
         } catch (SQLException ex) {
@@ -89,9 +87,9 @@ public class IdiomaDAOImpl implements IdiomaDAO {
     @Override
     public List<Idioma> findByJuego(Connection conexion, Integer idJuego, String idiomaS) throws DataException {
         PreparedStatement preparedStatement = null;
-        ResultSet rs = null;
+        ResultSet resultSet = null;
 		StringBuilder query;
-		Idioma idioma;
+		Idioma idioma = new Idioma();
 		List<Idioma> idiomas;
 		try {
 			query = new StringBuilder();
@@ -106,26 +104,24 @@ public class IdiomaDAOImpl implements IdiomaDAO {
             preparedStatement.setInt(1, idJuego);
             preparedStatement.setString(2, idiomaS);
 
-            rs = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             // Recupera la pagina de resultados
 			idiomas= new ArrayList<>();
-            while (rs.next()) {
-                idioma = loadNext(rs);
-                idiomas.add(idioma);
+            while (resultSet.next()) {
+                idiomas.add(loadNext(resultSet, idioma));
             }
             return idiomas;
         } catch (SQLException e) {
             logger.error(e.getMessage(), e);
             throw new DataException(e);
         } finally {
-            JDBCUtils.closeResultSet(rs);
+            JDBCUtils.closeResultSet(resultSet);
             JDBCUtils.closeStatement(preparedStatement);
         }
     }
 
-    public Idioma loadNext(ResultSet resultSet) throws SQLException {
-        Idioma idioma = new Idioma();
+    public Idioma loadNext(ResultSet resultSet, Idioma idioma) throws SQLException {
         idioma.setIdIdioma(resultSet.getString("id_idioma"));
         idioma.setNombre(resultSet.getString("nombre"));
         return idioma;

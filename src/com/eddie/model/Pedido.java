@@ -9,13 +9,13 @@ public class Pedido implements ValueObject{
 	private Integer idPedido=null;
 	private String email=null;
 	private Double total=null;
-	private Date fecha_pedido=null;
-	private List<LineaPedido>lineaspedido=null;
+	private Date fechaPedido =null;
+	private List<LineaPedido> lineasPedido;
 	
 	private static final Integer IVA=21;
 	
 	public Pedido() {
-		lineaspedido=new ArrayList<LineaPedido>();
+		lineasPedido =new ArrayList<>();
 	}
 
 	public Integer getNumeroPedido() {
@@ -49,24 +49,24 @@ public class Pedido implements ValueObject{
 		this.total = total;
 	}
 
-	public Date getFecha_pedido() {
-		return fecha_pedido;
+	public Date getFechaPedido() {
+		return fechaPedido;
 	}
 
-	public void setFecha_pedido(Date fecha_pedido) {
-		this.fecha_pedido = fecha_pedido;
+	public void setFechaPedido(Date fechaPedido) {
+		this.fechaPedido = fechaPedido;
 	}
 
 	public static Integer getIva() {
 		return IVA;
 	}
 
-	public List<LineaPedido> getLineaspedido() {
-		return lineaspedido;
+	public List<LineaPedido> getLineasPedido() {
+		return lineasPedido;
 	}
 
-	public void setLineaspedido(List<LineaPedido> lineaspedido) {
-		this.lineaspedido = lineaspedido;
+	public void setLineasPedido(List<LineaPedido> lineasPedido) {
+		this.lineasPedido = lineasPedido;
 	}
 	
 	@Override

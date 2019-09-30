@@ -40,8 +40,8 @@ public class FormatoDAOImpl implements FormatoDAO {
 
             formatos = new ArrayList<>();
             while (resultSet.next()) {
-                formato = loadNext(resultSet);
-                formatos.add(formato);
+                formato = new Formato();
+                formatos.add(loadNext(resultSet,formato));
             }
             return formatos;
         } catch (SQLException ex) {
@@ -72,8 +72,8 @@ public class FormatoDAOImpl implements FormatoDAO {
 
             formatos= new ArrayList<>();
             while (resultSet.next()) {
-                formato = loadNext(resultSet);
-                formatos.add(formato);
+                formato = new Formato();
+                formatos.add(loadNext(resultSet,formato));
             }
             return formatos;
         } catch (SQLException ex) {
@@ -86,8 +86,7 @@ public class FormatoDAOImpl implements FormatoDAO {
 
     }
 
-    public Formato loadNext(ResultSet resultSet) throws SQLException {
-        Formato formato = new Formato();
+    public Formato loadNext(ResultSet resultSet,Formato formato) throws SQLException {
         formato.setIdFormato(resultSet.getInt("id_formato"));
         formato.setNombre(resultSet.getString("nombre"));
         return formato;

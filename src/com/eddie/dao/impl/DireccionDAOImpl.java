@@ -73,13 +73,13 @@ public class DireccionDAOImpl implements DireccionDAO{
 			query.append("values (?,?,?,?,?,?)");
 
 			preparedStatement=conexion.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
-
-			preparedStatement.setInt(1, direccion.getIdprovincia());
-			preparedStatement.setString(2, direccion.getCodigoPostal());
-			preparedStatement.setString(3, direccion.getCalle());
-			preparedStatement.setString(4, direccion.getNumero());
-			preparedStatement.setString(5, direccion.getPiso());
-			preparedStatement.setString(6, direccion.getLocalidad());
+			int i = 1;
+			preparedStatement.setInt(i++, direccion.getIdprovincia());
+			preparedStatement.setString(i++, direccion.getCodigoPostal());
+			preparedStatement.setString(i++, direccion.getCalle());
+			preparedStatement.setString(i++, direccion.getNumero());
+			preparedStatement.setString(i++, direccion.getPiso());
+			preparedStatement.setString(i, direccion.getLocalidad());
 			
 			int insertRow=preparedStatement.executeUpdate();
 
@@ -139,7 +139,7 @@ public class DireccionDAOImpl implements DireccionDAO{
 			
 			int updatedRows = preparedStatement.executeUpdate();
 
-			return updatedRows != 0 && updatedRows <= 1;
+			return updatedRows == 1;
 		} catch (SQLException e) {
 			logger.error(e.getMessage(),e);
 			throw new DataException(e);    

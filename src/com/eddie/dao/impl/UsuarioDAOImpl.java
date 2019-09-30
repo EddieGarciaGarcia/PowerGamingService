@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,141 +22,96 @@ public class UsuarioDAOImpl implements UsuarioDAO{
 	private static Logger logger=LogManager.getLogger(UsuarioDAOImpl.class);
 
 	@Override
-	public Usuario create(Usuario u, Connection connection) throws DataException {
-		
-		if(logger.isDebugEnabled()) {
-			logger.debug("Usuario = "+u.toString());
-		}
-		
-		PreparedStatement pst=null;
-		ResultSet rs=null;
-		
+	public boolean create(Connection connection, Usuario usuario) throws DataException {
+		PreparedStatement preparedStatement=null;
+		ResultSet resultSet=null;
+		StringBuilder query;
 		try {
-		
-			String sql;
-			sql="Insert Into usuario(email,nombre,apellido1,apellido2,telefono,password, fecha_nacimiento, genero,nombre_user) "
-					+ "values (?,?,?,?,?,?,?,?,?)";
-			
-			pst=connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+			query = new StringBuilder();
+			query.append("Insert Into usuario(email,nombre,apellido1,apellido2,telefono,password, fecha_nacimiento, genero,nombre_user) ");
+			query.append("values (?,?,?,?,?,?,?,?,?)");
+			preparedStatement=connection.prepareStatement(query.toString(), Statement.RETURN_GENERATED_KEYS);
 			int i=1;
-			if(u.getEmail()==null || u.getEmail().equals("")) {
+			if(usuario.getEmail()==null || usuario.getEmail().equals("")) {
 				logger.warn("fallo email null o vacio");
 			}else {
-				pst.setString(i++,u.getEmail());
+				preparedStatement.setString(i++,usuario.getEmail());
 			}
-			pst.setString(i++, u.getNombre());
-			pst.setString(i++, u.getApellido1());
-			pst.setString(i++, u.getApellido2());
-			pst.setString(i++, u.getTelefono());
-			pst.setString(i++, PasswordEncryptionUtil.encryptPassword(u.getPassword()));
-			pst.setDate(i++, new java.sql.Date(u.getFechaNacimiento().getTime()));
-			pst.setString(i++, u.getGenero());
-			pst.setString(i++, u.getNombreUser());
-			
-			logger.debug(sql);
-			
-			int insertRow=pst.executeUpdate();
-			if(insertRow == 0) {
-				throw new SQLException(" No se pudo insertar");	
-			}
-		
-			return u;
+			preparedStatement.setString(i++, usuario.getNombre());
+			preparedStatement.setString(i++, usuario.getApellido1());
+			preparedStatement.setString(i++, usuario.getApellido2());
+			preparedStatement.setString(i++, usuario.getTelefono());
+			preparedStatement.setString(i++, PasswordEncryptionUtil.encryptPassword(usuario.getPassword()));
+			preparedStatement.setDate(i++, new java.sql.Date(usuario.getFechaNacimiento().getTime()));
+			preparedStatement.setString(i++, usuario.getGenero());
+			preparedStatement.setString(i, usuario.getNombreUser());
+
+			int insertRow=preparedStatement.executeUpdate();
+			return insertRow != 0;
 		}catch (SQLException ex) {
 			logger.error(ex.getMessage(),ex);
 			throw new DataException(ex);
 		}finally{
-			JDBCUtils.closeResultSet(rs);
-			JDBCUtils.closeStatement(pst);
+			JDBCUtils.closeResultSet(resultSet);
+			JDBCUtils.closeStatement(preparedStatement);
 		}
 	}
 
 	@Override
-	public boolean update(Usuario u, Connection connection) throws InstanceNotFoundException, DataException{
-		
-		if(logger.isDebugEnabled()) {
-			logger.debug("Usuario = "+u.toString());
-		}
-		
+	public boolean update(Connection connection,Usuario usuario) throws DataException{
 		PreparedStatement preparedStatement = null;
-		StringBuilder sqlupdate;
-		try {	
-			
-			sqlupdate = new StringBuilder(" UPDATE Usuario");
-			
+		StringBuilder query;
+		try {
+			query = new StringBuilder();
+			query.append("UPDATE Usuario ");
 			boolean first = true;
-			
-			if (u.getNombre()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," nombre = ?");
+			if (usuario.getNombre()!=null) {
+				JDBCUtils.addUpdate(query,first,"nombre = ? ");
 				first=false;
 			}
-			
-			if (u.getApellido1()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," apellido1 = ?");
+			if (usuario.getApellido1()!=null) {
+				JDBCUtils.addUpdate(query,first,"apellido1 = ? ");
 				first=false;
 			}
-			
-			if (u.getApellido2()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," apellido2 = ?");
+			if (usuario.getApellido2()!=null) {
+				JDBCUtils.addUpdate(query,first,"apellido2 = ? ");
 				first=false;
 			}
-			
-			if (u.getTelefono()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," telefono = ?");
+			if (usuario.getTelefono()!=null) {
+				JDBCUtils.addUpdate(query,first,"telefono = ? ");
 				first=false;
 			}
-					
-			if (u.getPassword()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," password = ?");
+			if (usuario.getPassword()!=null) {
+				JDBCUtils.addUpdate(query,first,"password = ? ");
 				first=false;
 			}
-			if (u.getFechaNacimiento()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," fecha_nacimiento = ?");
+			if (usuario.getFechaNacimiento()!=null) {
+				JDBCUtils.addUpdate(query,first,"fecha_nacimiento = ? ");
 				first=false;
 			}
-			
-			if (u.getNombreUser()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," nombre_user = ?");
+			if (usuario.getNombreUser()!=null) {
+				JDBCUtils.addUpdate(query,first,"nombre_user = ? ");
 				first=false;
 			}
-			
-			if (u.getGenero()!=null) {
-				JDBCUtils.addUpdate(sqlupdate,first," genero = ?");
-				first=false;
+			if (usuario.getGenero()!=null) {
+				JDBCUtils.addUpdate(query,first,"genero = ? ");
 			}
-			sqlupdate.append(" WHERE email = ?");
+			query.append(" WHERE email = ?");
 			
-			preparedStatement = connection.prepareStatement(sqlupdate.toString());
-			
+			preparedStatement = connection.prepareStatement(query.toString());
 
 			int i = 1;
-			if (u.getNombre()!=null) 
-				preparedStatement.setString(i++,u.getNombre());
-			
-			if (u.getApellido1()!=null) 
-				preparedStatement.setString(i++,u.getApellido1());
-			if (u.getApellido2()!=null) 
-				preparedStatement.setString(i++,u.getApellido2());
-			if (u.getTelefono()!=null) 
-				preparedStatement.setString(i++,u.getTelefono());
-			if (u.getPassword()!=null) 
-				preparedStatement.setString(i++,PasswordEncryptionUtil.encryptPassword(u.getPassword()));
-			if (u.getFechaNacimiento()!=null) 
-				preparedStatement.setDate(i++,new java.sql.Date(u.getFechaNacimiento().getTime()));
-			if (u.getNombreUser()!=null) 
-				preparedStatement.setString(i++,u.getNombreUser());
-			if (u.getGenero()!=null) 
-				preparedStatement.setString(i++,u.getGenero());
-			
-			preparedStatement.setString(i++, u.getEmail());
-
+			if (usuario.getNombre()!=null) preparedStatement.setString(i++,usuario.getNombre());
+			if (usuario.getApellido1()!=null) preparedStatement.setString(i++,usuario.getApellido1());
+			if (usuario.getApellido2()!=null) preparedStatement.setString(i++,usuario.getApellido2());
+			if (usuario.getTelefono()!=null) preparedStatement.setString(i++,usuario.getTelefono());
+			if (usuario.getPassword()!=null) preparedStatement.setString(i++,PasswordEncryptionUtil.encryptPassword(usuario.getPassword()));
+			if (usuario.getFechaNacimiento()!=null) preparedStatement.setDate(i++,new java.sql.Date(usuario.getFechaNacimiento().getTime()));
+			if (usuario.getNombreUser()!=null) preparedStatement.setString(i++,usuario.getNombreUser());
+			if (usuario.getGenero()!=null) preparedStatement.setString(i++,usuario.getGenero());
+			preparedStatement.setString(i, usuario.getEmail());
 			int updatedRows = preparedStatement.executeUpdate();
-
-			logger.debug(sqlupdate);
-			
-			if (updatedRows > 1) {
-				throw new SQLException("email duplicado = '" + u.getEmail() + "' en table 'Juego'");
-			}     
-			return true;
+			return updatedRows == 1;
 		} catch (SQLException e) {
 			logger.error(e.getMessage(),e);
 			throw new DataException(e);    
@@ -167,114 +121,64 @@ public class UsuarioDAOImpl implements UsuarioDAO{
 	}
 	
 	@Override
-	public long delete(String email, Connection connection) throws DataException{
-		
-		if(logger.isDebugEnabled()) {
-			logger.debug("Email = "+email);
-		}
-		
+	public boolean delete(Connection connection, String email) throws DataException{
 		PreparedStatement preparedStatement = null;
-
+		StringBuilder query;
 		try {
-			String queryString =	
-					  "DELETE FROM Usuario " 
-					+ "WHERE email = ? ";
-			
-			preparedStatement = connection.prepareStatement(queryString);
-
-			logger.debug(queryString);
-			
-			int i = 1;
-			preparedStatement.setString(i++, email);
-
+			query= new StringBuilder();
+			query.append("DELETE FROM Usuario ");
+			query.append("WHERE email = ?");
+			preparedStatement = connection.prepareStatement(query.toString());
+			preparedStatement.setString(1, email);
 			int removedRows = preparedStatement.executeUpdate();
-
-			if (removedRows == 0) {
-				throw new InstanceNotFoundException(email,Usuario.class.getName());
-			} 
-			
-
-			return removedRows;
-
+			return removedRows != 0;
 		} catch (SQLException e) {
 			logger.error(e.getMessage(),e);
 			throw new DataException(e);
 		} finally {
 			JDBCUtils.closeStatement(preparedStatement);
 		}
-		
 	}
 
-	
 	@Override
-	public Usuario findById(String email, Connection connection) throws DataException {
-		
-		if(logger.isDebugEnabled()) {
-			logger.debug("Email = "+email);
-		}
-		
-		Usuario u=null;
-		PreparedStatement pst=null;
-		ResultSet rs=null;
+	public Usuario findById(Connection connection, String email) throws DataException {
+		Usuario usuario;
+		PreparedStatement preparedStatement=null;
+		ResultSet resultSet=null;
+		StringBuilder query;
 		try {
-		
-			String sql;
-			sql="select email,nombre,apellido1,apellido2,telefono,password,fecha_nacimiento,genero,nombre_user from usuario where email=?";
-			
-			pst=connection.prepareStatement(sql,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			
-			int i=1;
-			//pst.setString(i++,"%"+nombrejuego.toUpperCase()+"%");
-			pst.setString(i++, email);	
-			rs=pst.executeQuery();
-			
-			logger.debug(sql);
-			
-			if(rs.next()){
-				u=loadNext(rs);
-			}else {
-				u=null;
-				logger.error("Error "+email+" id introducido incorrecto", Usuario.class.getName());
+			query = new StringBuilder();
+			query.append("select email,nombre,apellido1,apellido2,telefono,password,fecha_nacimiento,genero,nombre_user ");
+			query.append("from usuario ");
+			query.append("where email = ?");
+			preparedStatement=connection.prepareStatement(query.toString(),ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+			preparedStatement.setString(1, email);
+			resultSet=preparedStatement.executeQuery();
+			if(resultSet.next()){
+				usuario = new Usuario();
+				return loadNext(resultSet, usuario);
+			}else{
+				throw new InstanceNotFoundException("Error "+email+" id introducido incorrecto", Usuario.class.getName());
 			}
-			return u;
 		}catch (SQLException ex) {
 			logger.error(ex.getMessage(),ex);
 			throw new DataException(ex);
 		}finally{
-			JDBCUtils.closeResultSet(rs);
-			JDBCUtils.closeStatement(pst);
+			JDBCUtils.closeResultSet(resultSet);
+			JDBCUtils.closeStatement(preparedStatement);
 		}
-		
 	}
-	
-	
-	public Usuario loadNext(ResultSet rs) 
-		throws SQLException,DataException{
-			int i=1;
-			String email  = rs.getString(i++);
-			String nombre = rs.getString(i++);
-			String apellido1=rs.getString(i++);
-			String apellido2=rs.getString(i++);
-			String telefono=rs.getString(i++);
-			String password=rs.getString(i++);
-			Date fechaNacimiento=rs.getDate(i++);
-			String genero=rs.getString(i++);
-			String nombreUser=rs.getString(i++);
-			
-			Usuario u= new Usuario();
-			
-			u.setEmail(email);
-			u.setNombre(nombre);
-			u.setApellido1(apellido1);
-			u.setApellido2(apellido2);
-			u.setTelefono(telefono);
-			u.setPassword(password);
-			u.setFechaNacimiento(fechaNacimiento);
-			u.setNombreUser(nombreUser);
-			u.setGenero(genero);
-			
-			
-			return u;
-		
+
+	public Usuario loadNext(ResultSet rs, Usuario usuario) throws SQLException{
+			usuario.setEmail( rs.getString("email"));
+			usuario.setNombre(rs.getString("nombre"));
+			usuario.setApellido1(rs.getString("apellido1"));
+			usuario.setApellido2(rs.getString("apellido2"));
+			usuario.setTelefono(rs.getString("telefono"));
+			usuario.setPassword(rs.getString("password"));
+			usuario.setFechaNacimiento(rs.getDate("fecha_nacimiento"));
+			usuario.setNombreUser(rs.getString("genero"));
+			usuario.setGenero(rs.getString("nombre_user"));
+			return usuario;
 	}
 }

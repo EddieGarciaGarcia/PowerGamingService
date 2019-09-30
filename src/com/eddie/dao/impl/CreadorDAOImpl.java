@@ -39,11 +39,11 @@ public class CreadorDAOImpl implements CreadorDAO {
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-            	creador = loadNext(resultSet);
+                creador = new Creador();
+            	return loadNext(resultSet,creador);
             } else {
                 throw new InstanceNotFoundException("Error " + id + " id introducido incorrecto", Creador.class.getName());
             }
-            return creador;
         } catch (SQLException ex) {
             logger.error(ex.getMessage(), ex);
             throw new DataException(ex);
@@ -71,8 +71,8 @@ public class CreadorDAOImpl implements CreadorDAO {
 
             creadores = new ArrayList<>();
             while (resultSet.next()) {
-                creador = loadNext(resultSet);
-                creadores.add(creador);
+                creador = new Creador();
+                creadores.add(loadNext(resultSet, creador));
             }
             return creadores;
         } catch (SQLException ex) {
@@ -83,8 +83,7 @@ public class CreadorDAOImpl implements CreadorDAO {
             JDBCUtils.closeStatement(preparedStatement);
         }
     }
-    public Creador loadNext(ResultSet resultSet) throws SQLException {
-        Creador creador = new Creador();
+    public Creador loadNext(ResultSet resultSet, Creador creador) throws SQLException {
         creador.setIdCreador(resultSet.getInt("id_creador"));
         creador.setNombre(resultSet.getString("nombre"));
         return creador;

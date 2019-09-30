@@ -8,9 +8,9 @@ public interface DireccionDAO {
 	
 	Direccion findById(Connection conexion,String email) throws DataException;
 	
-	boolean create(Connection conexion,Direccion d) throws DataException;
+	boolean create(Connection conexion,Direccion direccion) throws DataException;
 	
-	boolean update(Connection conexion,Direccion d) throws DataException;
+	boolean update(Connection conexion,Direccion direccion) throws DataException;
 	
 	boolean delete(Connection conexion,String email) throws DataException;
 }

@@ -4,20 +4,18 @@ import java.sql.Connection;
 import java.util.List;
 
 import com.eddie.exceptions.DataException;
-import com.eddie.exceptions.InstanceNotFoundException;
 import com.eddie.model.Pedido;
 import com.eddie.model.Resultados;
-import com.eddie.exceptions.DuplicateInstanceException;
 
 public interface PedidoDAO {
 	
-	public Resultados<Pedido> findByEmail(Connection conexion,String email, int startIndex, int count)throws InstanceNotFoundException, DataException;
+	Resultados<Pedido> findByEmail(Connection conexion,String email, int startIndex, int count)throws DataException;
 	
-	public List<Pedido> findByIds(Connection conexion,List<Integer> ids)throws DataException;
+	List<Pedido> findByIds(Connection conexion,List<Integer> ids)throws DataException;
 	
-	public Pedido findByEmail(Connection conexion,String email)throws InstanceNotFoundException, DataException;
+	Pedido findByEmail(Connection conexion,String email)throws DataException;
 	
-	public Pedido create(Connection conexion,Pedido p) throws DuplicateInstanceException, DataException;
+	boolean create(Connection conexion,Pedido pedido) throws DataException;
 	
-	public void delete(Connection conexion,Integer idPedido) throws DataException;
+	boolean delete(Connection conexion,Integer idPedido) throws DataException;
 }
