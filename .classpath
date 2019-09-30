@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/c3p0-0.9.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/commons-email-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.6.jar"/>
+	<classpathentry kind="lib" path="lib/jasypt-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/javax.mail-1.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-api-2.10.0.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-core-2.10.0.jar"/>
+	<classpathentry kind="lib" path="lib/mchange-commons-java-0.2.11.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-8.0.13.jar"/>
+	<classpathentry kind="lib" path="lib/PowergamingServices.jar"/>
+	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/smtp.jar"/>
+	<classpathentry kind="lib" path="lib/taglibs-standard-impl-1.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/taglibs-standard-jstlel-1.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/taglibs-standard-spec-1.2.5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
