@@ -40,8 +40,7 @@ import com.eddie.service.impl.JuegoServiceImpl;
 import com.eddie.service.impl.PlataformaServiceImpl;
 import com.eddie.service.impl.TipoEdicionServiceImpl;
 import com.eddie.controller.AttributeNames;
-import com.eddie.utils.util.SessionManager;
-import com.eddie.utils.util.WebConstants;
+import com.eddie.utils.config.SessionManager;
 
 
 /**

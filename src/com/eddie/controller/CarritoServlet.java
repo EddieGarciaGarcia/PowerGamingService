@@ -13,8 +13,7 @@ import com.eddie.model.Edicion;
 import com.eddie.service.EdicionService;
 import com.eddie.service.impl.EdicionServiceImpl;
 import com.eddie.utils.model.Carrito;
-import com.eddie.utils.util.SessionAttributeNames;
-import com.eddie.utils.util.SessionManager;
+import com.eddie.utils.config.SessionManager;
 
 /**
  * Servlet implementation class CarritoServlet

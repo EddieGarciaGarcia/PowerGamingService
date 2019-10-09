@@ -25,10 +25,7 @@ import com.eddie.service.UsuarioService;
 import com.eddie.service.impl.JuegoServiceImpl;
 import com.eddie.service.impl.UsuarioServiceImpl;
 import com.eddie.utils.config.ConfigurationManager;
-import com.eddie.utils.config.ConfigurationParameterNames;
-import com.eddie.utils.util.SessionAttributeNames;
-import com.eddie.utils.util.SessionManager;
-import com.eddie.utils.util.WebConstants;
+import com.eddie.utils.config.SessionManager;
 import com.eddie.utils.util.WebUtils;
 
 /**

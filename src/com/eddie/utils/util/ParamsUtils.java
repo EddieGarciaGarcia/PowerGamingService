@@ -23,11 +23,11 @@ public class ParamsUtils {
 		StringBuilder urlBuilder = new StringBuilder();
 		urlBuilder.append(url);
 		for(String mapKey: valores.keySet()) {
-			if(cont == 1) urlBuilder.append(WebConstants.QUESTION_MARK);
-			urlBuilder.append(URLEncoder.encode(trimmer(mapKey), WebConstants.ENCODING)).append(WebConstants.EQUAL)
-				.append(URLEncoder.encode(trimmer(valores.get(mapKey)), WebConstants.ENCODING));
+			if(cont == 1) urlBuilder.append(ConfiguracionConstantes.QUESTION_MARK);
+			urlBuilder.append(URLEncoder.encode(trimmer(mapKey), ConfiguracionConstantes.ENCODING)).append(ConfiguracionConstantes.EQUAL)
+				.append(URLEncoder.encode(trimmer(valores.get(mapKey)), ConfiguracionConstantes.ENCODING));
 			if(cont != valores.size()) {
-				urlBuilder.append(WebConstants.AMPERSAND_URL);
+				urlBuilder.append(ConfiguracionConstantes.AMPERSAND_URL);
 			}
 			cont++;
 		}

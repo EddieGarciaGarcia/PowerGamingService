@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.eddie.utils.util.ConfiguracionConstantes;
+import com.eddie.utils.util.Constantes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -24,14 +26,11 @@ import com.eddie.service.MailService;
 import com.eddie.service.UsuarioService;
 import com.eddie.service.impl.MailServiceImpl;
 import com.eddie.service.impl.UsuarioServiceImpl;
-import com.eddie.utils.model.ErrorCodes;
 import com.eddie.utils.model.Errors;
 import com.eddie.utils.util.DateUtils;
-import com.eddie.utils.util.SessionAttributeNames;
-import com.eddie.utils.util.SessionManager;
-import com.eddie.utils.util.CookieManager;
-import com.eddie.utils.util.LocaleManager;
-import com.eddie.utils.util.WebConstants;
+import com.eddie.utils.config.SessionManager;
+import com.eddie.utils.config.CookieManager;
+import com.eddie.utils.config.LocaleManager;
 import com.eddie.utils.util.LimpiezaValidacion;
 
 /**
@@ -230,8 +229,8 @@ public class UsuarioServlet extends HttpServlet {
 					newLocale = LocaleManager.getDefault();
 				}
 
-				SessionManager.set(request, WebConstants.USER_LOCALE, newLocale);			
-				CookieManager.addCookie(response, WebConstants.USER_LOCALE, newLocale.toString(), "/", 365*24*60*60);
+				SessionManager.set(request, ConfiguracionConstantes.USER_LOCALE, newLocale);
+				CookieManager.addCookie(response, ConfiguracionConstantes.USER_LOCALE, newLocale.toString(), "/", 365*24*60*60);
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Locale changed to "+newLocale);

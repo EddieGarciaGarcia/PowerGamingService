@@ -1,4 +1,4 @@
-package com.eddie.utils.util;
+package com.eddie.utils.config;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;

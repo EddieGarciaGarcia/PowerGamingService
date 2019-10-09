@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@page import="com.eddie.model.*, com.eddie.utils.util.*, com.eddie.utils.model.*, com.eddie.controller.*, java.util.List "%>
+<%@ page import="com.eddie.utils.config.SessionManager" %>
+<%@ page import="com.eddie.utils.config.SessionAttributeNames" %>
 
 <div onmouseover="ver(5)" onmouseout="ocultar(5)" id="carrito">
 <img class="imgcarrito"src="<%=request.getContextPath()%>/imgs/carrito.png"/>

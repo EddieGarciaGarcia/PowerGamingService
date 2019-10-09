@@ -1,4 +1,4 @@
-package com.eddie.utils.util;
+package com.eddie.utils.config;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,9 +9,6 @@ import java.util.Locale;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.eddie.utils.config.ConfigurationManager;
-import com.eddie.utils.config.ConfigurationParameterNames;
 
 public class LocaleManager {
 	

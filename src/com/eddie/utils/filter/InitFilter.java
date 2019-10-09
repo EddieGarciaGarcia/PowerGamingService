@@ -18,8 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.eddie.controller.Actions;
 import com.eddie.controller.ParameterNames;
-import com.eddie.utils.util.SessionAttributeNames;
-import com.eddie.utils.util.SessionManager;
+import com.eddie.utils.config.SessionManager;
 import com.eddie.controller.ViewPaths;
 
 /**

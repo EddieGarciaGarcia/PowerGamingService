@@ -17,10 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.eddie.utils.util.CookieManager;
-import com.eddie.utils.util.LocaleManager;
-import com.eddie.utils.util.SessionManager;
-import com.eddie.utils.util.WebConstants;
+import com.eddie.utils.config.CookieManager;
+import com.eddie.utils.config.LocaleManager;
+import com.eddie.utils.config.SessionManager;
 
 /**
  * Filtro para inicializacion del Locale

@@ -16,8 +16,7 @@ import com.eddie.model.ItemBiblioteca;
 import com.eddie.model.Usuario;
 import com.eddie.service.UsuarioService;
 import com.eddie.service.impl.UsuarioServiceImpl;
-import com.eddie.utils.util.SessionAttributeNames;
-import com.eddie.utils.util.SessionManager;
+import com.eddie.utils.config.SessionManager;
 
 /**
  * Servlet implementation class Puntuacion

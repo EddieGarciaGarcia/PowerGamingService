@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 
-public class PowerGamingServiceServlet extends HttpServlet {
+public class PowerGamingService extends HttpServlet {
 
-    private static Logger logger = LogManager.getLogger(PowerGamingServiceServlet.class);
+    private static Logger logger = LogManager.getLogger(PowerGamingService.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
@@ -30,6 +30,7 @@ public class PowerGamingServiceServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         Connection connection = null;
+
         try{
 
 
