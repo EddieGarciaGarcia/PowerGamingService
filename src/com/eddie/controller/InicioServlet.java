@@ -7,14 +7,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.eddie.ecommerce.model.Juego;
+import com.eddie.ecommerce.model.Resultados;
+import com.eddie.ecommerce.service.JuegoService;
+import com.eddie.ecommerce.service.impl.JuegoServiceImpl;
+import com.eddie.ecommerce.utils.Constantes;
+import com.eddie.utils.util.ConfiguracionConstantes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.eddie.exceptions.DataException;
-import com.eddie.model.Juego;
-import com.eddie.service.JuegoService;
-import com.eddie.model.Resultados;
-import com.eddie.service.impl.JuegoServiceImpl;
 import com.eddie.utils.config.ConfigurationManager;
 import com.eddie.utils.config.SessionManager;
 import com.eddie.utils.util.WebUtils;
@@ -27,12 +29,10 @@ public class InicioServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private static int pageSize = Integer.valueOf(
-			ConfigurationManager.getInstance().getParameter(
-						ConfigurationParameterNames.RESULTS_PAGE_SIZE_DEFAULT))+2; 
+			ConfigurationManager.getInstance().getParameter(ConfiguracionConstantes.RESULTS_PAGE_SIZE_DEFAULT))+2;
 	
 	private static int pagingPageCount = Integer.valueOf(
-			ConfigurationManager.getInstance().getParameter(
-						ConfigurationParameterNames.RESULTS_PAGING_PAGE_COUNT)); 
+			ConfigurationManager.getInstance().getParameter(ConfiguracionConstantes.RESULTS_PAGING_PAGE_COUNT));
 	private JuegoService juegoService = null;
 	private static Logger logger = LogManager.getLogger(JuegoServlet.class);
     public InicioServlet() {
@@ -43,7 +43,7 @@ public class InicioServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String target = null;
-		String idiomaPagina=SessionManager.get(request,WebConstants.USER_LOCALE).toString().substring(0,2).toUpperCase();
+		String idiomaPagina=SessionManager.get(request, ConfiguracionConstantes.USER_LOCALE).toString().substring(0,2).toUpperCase();
 		
 		int page = WebUtils.
 				getPageNumber(request.getParameter(ParameterNames.PAGE), 1);
