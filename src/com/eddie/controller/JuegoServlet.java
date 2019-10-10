@@ -32,7 +32,6 @@ import com.eddie.service.impl.JuegoServiceImpl;
 import com.eddie.service.impl.UsuarioServiceImpl;
 import com.eddie.utils.util.ArrayUtils;
 import com.eddie.utils.util.LimpiezaValidacion;
-import com.eddie.utils.config.SessionManager;
 import com.eddie.utils.util.WebUtils;
 import com.eddie.utils.config.ConfigurationManager;
 
@@ -204,21 +203,7 @@ public class JuegoServlet extends HttpServlet {
 				request.setAttribute(AttributeNames.PRODUCTO_RESULTADOS, juego);
 				
 				target =ViewPaths.JUEGO;
-			}else if(Actions.ADDCOMENTARIO.equalsIgnoreCase(action)) {
-				String comentario= request.getParameter(ParameterNames.COMENTARIO);
-				String id=request.getParameter(ParameterNames.ID);
-				Integer idJuego= Integer.valueOf(id);
-				
-				ItemBiblioteca it=new ItemBiblioteca();
-				it.setIdJuego(idJuego);
-				it.setComentario(comentario);
-				it.setEmail(user.getEmail());
-				Date d= new Date();
-				it.setFechaComentario(new java.sql.Date(d.getTime()));
-				juegoService.addComent(it);
-			
-				target = request.getHeader(ViewPaths.REFERER);
-				redirect=true;
+			}
 				
 			}else {
 				logger.error("Action desconocida");

@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.eddie.utils.util.ConfiguracionConstantes;
-import com.eddie.utils.util.Constantes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.logging.log4j.LogManager;
@@ -28,9 +27,7 @@ import com.eddie.service.impl.MailServiceImpl;
 import com.eddie.service.impl.UsuarioServiceImpl;
 import com.eddie.utils.model.Errors;
 import com.eddie.utils.util.DateUtils;
-import com.eddie.utils.config.SessionManager;
 import com.eddie.utils.config.CookieManager;
-import com.eddie.utils.config.LocaleManager;
 import com.eddie.utils.util.LimpiezaValidacion;
 
 /**
