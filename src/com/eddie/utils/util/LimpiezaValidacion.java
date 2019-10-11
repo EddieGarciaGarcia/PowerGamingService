@@ -10,7 +10,7 @@ public class LimpiezaValidacion {
 	private static Matcher matcher = null;
 	
 	public static String validEmail(String email) {
-		pattern = Pattern.compile("^([0-9a-zA-Z]{1,20}+[-._+&]{1,5})*[0-9a-zA-Z]{1,20}+@([-0-9a-zA-Z]{1,15}+[.]{1})+[a-zA-Z]{2,3}$");
+		pattern = Pattern.compile("^([0-9a-zA-Z]{1,20}+[-._+&]{1,5})*[0-9a-zA-Z]{1,20}+@([-0-9a-zA-Z]{1,15})$");
 		if(!StringUtils.isEmptyOrWhitespaceOnly(email)) {
 			email=email.trim().toLowerCase();
 			matcher=pattern.matcher(email);

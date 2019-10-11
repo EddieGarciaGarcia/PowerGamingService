@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
 /**
  * En lugar de como clase utilidad, se ha implementado como Singleton 
  * por si es preciso en el futuro para diversas estrategias de 
@@ -85,4 +86,6 @@ public final class ConfigurationManager {
     		return getParameter(name);
     	}
     }
+
+
 }

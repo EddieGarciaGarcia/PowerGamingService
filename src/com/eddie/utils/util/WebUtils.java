@@ -1,7 +1,11 @@
 package com.eddie.utils.util;
 
+import com.eddie.ecommerce.model.Usuario;
+import com.eddie.ecommerce.utils.CacheManager;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.ehcache.Cache;
 
 /** 
  * Commodity method para facilitar la implementacion de la paginacion, etc.
@@ -23,5 +27,29 @@ public class WebUtils {
 			}
 		}
 		return pageNumber;
+	}
+
+	/**
+	 * Crea el id para la URL
+	 */
+	public static String generateSessionId() {
+		return RandomStringUtils.random(40);
+	}
+
+	public static Cache<String, Usuario> cache() {
+		return CacheManager.getCacheLogin(com.eddie.ecommerce.utils.Constantes.NOMBRE_CACHE_lOGIN);
+	}
+
+	/**
+	 * Determina si un String está vacio o es nulo
+	 *
+	 * @param str String.
+	 * @return true si está vacio o es nulo y false en caso contrario.
+	 */
+	public static boolean isEmptyOrNull(String str){
+		if(str == null || "".equals(str))
+			return true;
+		else
+			return false;
 	}
 }

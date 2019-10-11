@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
-  <display-name>PowerGamingWeb</display-name>
+<web-app xmlns="http://caucho.com/ns/resin">
+  <display-name>PowerGamingService</display-name>
   <servlet>
     <servlet-name>PowerGaming</servlet-name>
-    <servlet-class>com.eddie.PowerGamingService</servlet-class>
+    <servlet-class>com.eddie.PowerGamingServlet</servlet-class>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>PowerGaming</servlet-name>
-    <url-pattern>/PowerGaming</url-pattern>
+    <url-pattern>/power_gaming</url-pattern>
   </servlet-mapping>
 </web-app>
