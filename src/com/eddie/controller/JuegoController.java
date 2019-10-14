@@ -48,12 +48,12 @@ public class JuegoController {
         if (usuario != null) {
             if ("Buscar".equalsIgnoreCase(action)) {
                 // Recuperar parametros
-                String nombre = json.get(Constantes.NOMBRE).getAsString();
-                String[] categorias = json.get("Categorias").getAsString().split(",");
-                String creador = json.get("Creador").getAsString();
-                String[] plataforma = json.get("Plataformas").getAsString().split(",");
-                String[] idioma = json.get("Idioma").getAsString().split(",");
-                String fecha = json.get("Fecha").getAsString();
+                String nombre = json.has(Constantes.NOMBRE) ? json.get(Constantes.NOMBRE).getAsString() : null;
+                String[] categorias = json.has("Categorias") ? json.get("Categorias").getAsString().split(",") : null;
+                String creador = json.has("Creador") ? json.get("Creador").getAsString() : null;
+                String[] plataforma = json.has("Plataformas") ? json.get("Plataformas").getAsString().split(",") : null;
+                String[] idioma = json.has("Idioma") ? json.get("Idioma").getAsString().split(",") : null;
+                String fecha = json.has("Fecha") ? json.get("Fecha").getAsString() : null;
 
                 String nombreValid = LimpiezaValidacion.validNombreJuego(nombre);
 

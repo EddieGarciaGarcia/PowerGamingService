@@ -39,7 +39,7 @@ public class PowerGamingServlet extends HttpServlet {
         JsonObject jsonRequest = null;
         try {
             Scanner scanner = new Scanner(request.getInputStream(), "UTF-8");
-            StringBuilder sbResult = new StringBuilder();
+            StringBuffer sbResult = new StringBuffer();
             while (scanner.hasNextLine()) {
                 sbResult.append(scanner.nextLine());
             }

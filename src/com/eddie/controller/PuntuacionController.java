@@ -37,10 +37,10 @@ public class PuntuacionController {
 
         //Controlar que esta logeado
         Usuario usuario = WebUtils.cache().get(idLogin);
-        if (usuario != null) {
+        if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString()!= null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
             try {
-                if ("ChangePuntuacion".equalsIgnoreCase(action)) {
+                if ("ChangePuntuacion".equalsIgnoreCase(action) && (json.get("Puntuacion").getAsString()!= null || !json.get("Puntuacion").getAsString().equals(""))) {
                     Integer puntuacion = Integer.valueOf(json.get("Puntuacion").getAsString());
 
                     ItemBiblioteca puntuacionUsuario = usuarioService.findByIdEmail(usuario.getEmail(), idJuego);
@@ -52,7 +52,7 @@ public class PuntuacionController {
                         respuesta.setStatusMsg(Error.UPDATE_FAIL.getCode());
                         logger.warn(Error.UPDATE_FAIL.getMsg());
                     }
-                } else if ("AddComentario".equalsIgnoreCase(action)) {
+                } else if ("AddComentario".equalsIgnoreCase(action) && (json.get("Comentario").getAsString()!= null || !json.get("Comentario").getAsString().equals(""))) {
                     String comentario = json.get("Comentario").getAsString();
 
                     ItemBiblioteca itemBiblioteca = new ItemBiblioteca();
@@ -68,6 +68,10 @@ public class PuntuacionController {
                         respuesta.setStatusMsg(Error.UPDATE_FAIL.getCode());
                         logger.warn(Error.UPDATE_FAIL.getMsg());
                     }
+                }else{
+                    respuesta.setStatus(Constantes.KO);
+                    respuesta.setStatusMsg(Error.INVALID_REQUEST.getCode());
+                    logger.warn(Error.INVALID_REQUEST.getMsg());
                 }
             } catch(com.eddie.ecommerce.exceptions.DataException e) {
                 logger.info(e);

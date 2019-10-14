@@ -39,9 +39,9 @@ public class BibliotecaController {
 
         //Controlar que esta logeado
 
-        Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
         Usuario usuario = WebUtils.cache().get(idLogin);
-        if (usuario != null) {
+        if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString()!= null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
+            Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
             try {
                 if ("Biblioteca".equalsIgnoreCase(action)) {
                     List<ItemBiblioteca> biblioteca = usuarioService.findByUsuario(usuario.getEmail());
