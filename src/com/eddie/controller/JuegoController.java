@@ -15,10 +15,12 @@ import com.eddie.utils.util.WebUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.eddie.utils.util.Error;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +41,9 @@ public class JuegoController {
         creadorService = new CreadorServiceImpl();
     }
 
-    public static Response procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws DataException {
+    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws DataException {
         JsonObject json = entrada.getAsJsonObject();
-        Response respuesta = new Response();
+        JsonObject respuesta = new JsonObject();
 
         String idLogin =json.get(Constantes.IDLOGIN).getAsString();
         Usuario usuario = WebUtils.cache().get(idLogin);
@@ -90,14 +92,13 @@ public class JuegoController {
                 if (usuario.getEmail() != null && !(idsJuegos.isEmpty())) {
                     idsJuegosEnBiblioteca = usuarioService.existsInBiblioteca(usuario.getEmail(), idsJuegos);
                 }
-                Map<String, List> datos = new HashMap<>();
-                datos.put("JuegosSearch", juegos);
+
                 if (idsJuegosEnBiblioteca != null && !idsJuegosEnBiblioteca.isEmpty()) {
-                    datos.put("JuegosBiblioteca", idsJuegosEnBiblioteca);
+                    respuesta.add("IdsJuegosBiblioteca",  new Gson().toJsonTree(idsJuegosEnBiblioteca, new TypeToken<List<Integer>>(){}.getType()).getAsJsonArray());
                 }
-                Gson gson = new Gson();
-                respuesta.setSalida(gson.toJson(datos));
-                respuesta.setStatus(Constantes.OK);
+
+                respuesta.add("JuegosSearch",  new Gson().toJsonTree(juegos, new TypeToken<List<Juego>>(){}.getType()).getAsJsonArray());
+                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
             } else if ("Juego".equalsIgnoreCase(action)) {
                 Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
 
@@ -114,14 +115,14 @@ public class JuegoController {
                         comentario.put(u.getNombreUser(), i);
                     }
                 }
-                Gson gson = new Gson();
-                respuesta.setStatusMsg(gson.toJson(juego));
-                respuesta.setSalida(gson.toJson(comentario));
-                respuesta.setStatus(Constantes.OK);
+
+                respuesta.add("Juego",  new Gson().toJsonTree(juego, new TypeToken<Juego>(){}.getType()).getAsJsonArray());
+                respuesta.add("Comentarios",  new Gson().toJsonTree(comentario, new TypeToken<HashMap<String, ItemBiblioteca>>(){}.getType()).getAsJsonArray());
+                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
             }
         }else {
-            respuesta.setStatus(Constantes.KO);
-            respuesta.setStatusMsg(Error.GENERIC_ERROR.getCode());
+            respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+            respuesta.addProperty(Constantes.STATUSMSG,Error.GENERIC_ERROR.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
         return respuesta;

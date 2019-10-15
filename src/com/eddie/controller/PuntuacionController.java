@@ -29,9 +29,9 @@ public class PuntuacionController {
         juegoService = new JuegoServiceImpl();
     }
 
-    public static Response procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws DataException {
+    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws DataException {
         JsonObject json = entrada.getAsJsonObject();
-        Response respuesta = new Response();
+        JsonObject respuesta = new JsonObject();
 
         String idLogin = json.get(Constantes.IDLOGIN).getAsString();
 
@@ -46,10 +46,10 @@ public class PuntuacionController {
                     ItemBiblioteca puntuacionUsuario = usuarioService.findByIdEmail(usuario.getEmail(), idJuego);
                     puntuacionUsuario.setPuntuacion(puntuacion);
                     if (usuarioService.borrarJuegoBiblioteca(usuario.getEmail(), idJuego) && usuarioService.create(puntuacionUsuario)) {
-                        respuesta.setStatus(Constantes.OK);
+                        respuesta.addProperty(Constantes.STATUS, Constantes.OK);
                     } else {
-                        respuesta.setStatus(Constantes.KO);
-                        respuesta.setStatusMsg(Error.UPDATE_FAIL.getCode());
+                        respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                        respuesta.addProperty(Constantes.STATUSMSG,Error.UPDATE_FAIL.getCode());
                         logger.warn(Error.UPDATE_FAIL.getMsg());
                     }
                 } else if ("AddComentario".equalsIgnoreCase(action) && (json.get("Comentario").getAsString()!= null || !json.get("Comentario").getAsString().equals(""))) {
@@ -62,23 +62,23 @@ public class PuntuacionController {
                     Date date = new Date();
                     itemBiblioteca.setFechaComentario(new java.sql.Date(date.getTime()));
                     if (juegoService.addComent(itemBiblioteca)) {
-                        respuesta.setStatus(Constantes.OK);
+                        respuesta.addProperty(Constantes.STATUS, Constantes.OK);
                     } else {
-                        respuesta.setStatus(Constantes.KO);
-                        respuesta.setStatusMsg(Error.UPDATE_FAIL.getCode());
+                        respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                        respuesta.addProperty(Constantes.STATUSMSG,Error.UPDATE_FAIL.getCode());
                         logger.warn(Error.UPDATE_FAIL.getMsg());
                     }
                 }else{
-                    respuesta.setStatus(Constantes.KO);
-                    respuesta.setStatusMsg(Error.INVALID_REQUEST.getCode());
+                    respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+                    respuesta.addProperty(Constantes.STATUSMSG,Error.INVALID_REQUEST.getCode());
                     logger.warn(Error.INVALID_REQUEST.getMsg());
                 }
             } catch(com.eddie.ecommerce.exceptions.DataException e) {
                 logger.info(e);
             }
         }else{
-            respuesta.setStatus(Constantes.KO);
-            respuesta.setStatusMsg(Error.GENERIC_ERROR.getCode());
+            respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+            respuesta.addProperty(Constantes.STATUSMSG,Error.GENERIC_ERROR.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
         return respuesta;

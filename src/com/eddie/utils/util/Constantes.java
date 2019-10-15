@@ -13,4 +13,7 @@ public interface Constantes {
     public static String KO = "KO";
     public static String OK = "OK";
     public static String IDLOGIN = "IdLogin";
+    public static String STATUS = "Status" ;
+    public static String STATUSMSG = "StatusMsg" ;
+    public static String SALIDA = "Salida";
 }

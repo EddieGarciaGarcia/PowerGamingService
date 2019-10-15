@@ -44,14 +44,10 @@ public class PowerGamingServlet extends HttpServlet {
                 sbResult.append(scanner.nextLine());
             }
             jsonRequest = new Gson().fromJson(sbResult.toString(), JsonObject.class);
-            Response respuesta = new Response();
+            JsonObject jsonResponse = new JsonObject();
 
             if(!jsonRequest.get("Metodo").getAsString().equals("Juego") || !jsonRequest.get("Metodo").getAsString().equals("Biblioteca")|| !jsonRequest.get("Metodo").getAsString().equals("Puntuacion")
                     || !jsonRequest.get("Metodo").getAsString().equals("Inicio")|| !jsonRequest.get("Metodo").getAsString().equals("Password")|| !jsonRequest.get("Metodo").getAsString().equals("Usuario")) {
-
-                /*StringBuilder direccion = new StringBuilder();
-                direccion.append();
-                direccion.append(jsonRequest.get("Servicio"));*/
 
                 Class datos = JsonElement.class;
                 Class action = String.class;
@@ -60,23 +56,18 @@ public class PowerGamingServlet extends HttpServlet {
                 Object obj = cls.newInstance();
 
                 Method method = cls.getDeclaredMethod("procesarPeticion", datos, action, idiomaWeb);
-                respuesta = (Response) method.invoke(obj, jsonRequest.get("Entrada"), jsonRequest.get("Action").getAsString(), jsonRequest.get("IdiomaWeb").getAsString());
+                jsonResponse = (JsonObject) method.invoke(obj, jsonRequest.get("Entrada"), jsonRequest.get("Action").getAsString(), jsonRequest.get("IdiomaWeb").getAsString());
 
             }else{
-                respuesta.setStatus("KO");
-                respuesta.setStatusMsg(Error.INVALID_REQUEST.getCode());
+                jsonResponse.addProperty("Status","KO");
+                jsonResponse.addProperty("StatusMsg",Error.INVALID_REQUEST.getCode());
                 logger.warn(Error.INVALID_REQUEST.getMsg());
             }
-
-            JsonObject responseJSON = new JsonObject();
-            responseJSON.addProperty("Status",respuesta.getStatus());
-            responseJSON.addProperty("StatusMsg",respuesta.getStatusMsg());
-            responseJSON.addProperty("Salida",respuesta.getSalida());
 
             PrintWriter out = response.getWriter();
             response.setContentType("application/json;charset=UTF-8");
 
-            out.println(responseJSON.toString());
+            out.println(jsonResponse.toString());
 
             out.flush();
             out.close();

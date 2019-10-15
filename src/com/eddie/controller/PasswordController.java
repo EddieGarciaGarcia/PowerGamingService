@@ -24,16 +24,17 @@ public class PasswordController {
         mailService = new MailServiceImpl();
     }
 
-    public static Response procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws Exception {
+    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws Exception {
         JsonObject json = entrada.getAsJsonObject();
-        Response respuesta = new Response();
+        JsonObject respuesta = new JsonObject();
+
         String email = LimpiezaValidacion.validEmail(json.has(Constantes.EMAIL) ? json.get(Constantes.EMAIL).getAsString() : null);
         if (email != null) {
             if ("ForgotPassword".equalsIgnoreCase(action)) {
                 Usuario usuario = usuarioService.findById(email);
                 if (usuario == null) {
-                    respuesta.setStatus(Constantes.KO);
-                    respuesta.setStatusMsg(Error.USUARIO_NOT_EXIST.getCode());
+                    respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                    respuesta.addProperty(Constantes.STATUSMSG,Error.USUARIO_NOT_EXIST.getCode());
                     logger.warn(Error.USUARIO_NOT_EXIST.getMsg());
                 } else {
                     StringBuilder enlace;
@@ -42,10 +43,10 @@ public class PasswordController {
                             "<html><h2>Power Gaming</h2><h4>Pulse en enlace o copielo entero para cambiar su contrase�a:</h4>"
                                     + "<a href='" + enlace + "'>Restablecer contrase�a</a><p>" + enlace + "</p></html>");
                     if (enviado) {
-                        respuesta.setStatus(Constantes.OK);
+                        respuesta.addProperty(Constantes.STATUS, Constantes.OK);
                     } else {
-                        respuesta.setStatus(Constantes.KO);
-                        respuesta.setStatusMsg(Error.SEND_FAIL.getCode());
+                        respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                        respuesta.addProperty(Constantes.STATUSMSG,Error.SEND_FAIL.getCode());
                         logger.warn(Error.SEND_FAIL.getMsg());
                     }
                 }
@@ -55,26 +56,26 @@ public class PasswordController {
                 usuario.setPassword(password);
                 boolean actualizado = usuarioService.update(usuario);
                 if (actualizado) {
-                    respuesta.setStatus(Constantes.OK);
+                    respuesta.addProperty(Constantes.STATUS, Constantes.OK);
                 } else {
-                    respuesta.setStatus(Constantes.KO);
-                    respuesta.setStatusMsg(Error.UPDATE_FAIL.getCode());
+                    respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                    respuesta.addProperty(Constantes.STATUSMSG,Error.UPDATE_FAIL.getCode());
                     logger.warn(Error.UPDATE_FAIL.getMsg());
                 }
             } else if ("Mensage".equalsIgnoreCase(action)) {
                 String mensage = json.get("Mensage").getAsString();
                 boolean enviado = mailService.sendMail("powergaming2019@gmail.com", email, mensage);
                 if (enviado) {
-                    respuesta.setStatus(Constantes.OK);
+                    respuesta.addProperty(Constantes.STATUS, Constantes.OK);
                 } else {
-                    respuesta.setStatus(Constantes.KO);
-                    respuesta.setStatusMsg(Error.SEND_FAIL.getCode());
+                    respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                    respuesta.addProperty(Constantes.STATUSMSG,Error.SEND_FAIL.getCode());
                     logger.warn(Error.SEND_FAIL.getMsg());
                 }
             }
         } else {
-            respuesta.setStatus(Constantes.KO);
-            respuesta.setStatusMsg(Error.INVALID_REQUEST.getCode());
+            respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+            respuesta.addProperty(Constantes.STATUSMSG,Error.INVALID_REQUEST.getCode());
             logger.warn(Error.INVALID_REQUEST.getMsg());
         }
 

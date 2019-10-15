@@ -9,6 +9,7 @@ import com.eddie.utils.util.Error;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,11 +25,10 @@ public class UsuarioController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static Response procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws Exception {
+    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws Exception {
         JsonObject json = entrada.getAsJsonObject();
-        Response respuesta = new Response();
+        JsonObject respuesta = new JsonObject();
         Usuario usuario;
-        Gson gson = new Gson();
 
         if ("Login".equalsIgnoreCase(action)) {
             String email = LimpiezaValidacion.validEmail(json.get(Constantes.EMAIL).getAsString());
@@ -36,8 +36,8 @@ public class UsuarioController {
 
             usuario = usuarioService.login(email, password);
             if (usuario == null) {
-                respuesta.setStatus(Constantes.KO);
-                respuesta.setStatusMsg(Error.USUARIO_NOT_EXIST.getCode());
+                respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                respuesta.addProperty(Constantes.STATUSMSG, Error.USUARIO_NOT_EXIST.getCode());
                 logger.warn(Error.USUARIO_NOT_EXIST.getMsg());
             } else {
                 String idLogin = WebUtils.generateSessionId();
@@ -45,13 +45,13 @@ public class UsuarioController {
                 WebUtils.cache().put(idLogin,usuario);
 
                 usuario.setIdLogin(idLogin);
-                respuesta.setStatusMsg(Constantes.OK);
-                respuesta.setSalida(gson.toJson(usuario));
+                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+                respuesta.add("usuario",  new Gson().toJsonTree(usuario, new TypeToken<Usuario>(){}.getType()).getAsJsonArray());
             }
         } else if ("Logout".equalsIgnoreCase(action)){
             String idLogin = json.get("IdLogin").getAsString();
             WebUtils.cache().remove(idLogin);
-            respuesta.setStatus(Constantes.OK);
+            respuesta.addProperty(Constantes.STATUS, Constantes.OK);
         } else if ("Registro".equalsIgnoreCase(action)) {
             usuario = new Usuario();
             SimpleDateFormat sdf = (SimpleDateFormat) DateUtils.FORMATODATA;
@@ -75,10 +75,10 @@ public class UsuarioController {
                 creado = usuarioService.create(usuario);
             }
             if(creado){
-                respuesta.setStatusMsg(Constantes.OK);
+                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
             }else{
-                respuesta.setStatus(Constantes.KO);
-                respuesta.setStatusMsg(Error.CREATE_FAIL.getCode());
+                respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                respuesta.addProperty(Constantes.STATUSMSG, Error.CREATE_FAIL.getCode());
                 logger.warn(Error.CREATE_FAIL.getMsg());
             }
         }else if ("Configuracion".equalsIgnoreCase(action)) {
@@ -99,10 +99,10 @@ public class UsuarioController {
                 actualizado = usuarioService.update(usuarioLogged);
             }
             if(actualizado){
-                respuesta.setStatus(Constantes.OK);
+                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
             }else{
-                respuesta.setStatus(Constantes.KO);
-                respuesta.setStatusMsg(Error.UPDATE_FAIL.getCode());
+                respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                respuesta.addProperty(Constantes.STATUSMSG, Error.UPDATE_FAIL.getCode());
                 logger.warn(Error.UPDATE_FAIL.getMsg());
             }
         }
