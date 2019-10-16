@@ -2,6 +2,7 @@ package com.eddie.controller;
 
 import com.eddie.ecommerce.exceptions.DataException;
 import com.eddie.ecommerce.model.ItemBiblioteca;
+import com.eddie.ecommerce.model.Juego;
 import com.eddie.ecommerce.model.Response;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.JuegoService;
@@ -11,12 +12,15 @@ import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
 import com.eddie.utils.util.Constantes;
 import com.eddie.utils.util.Error;
 import com.eddie.utils.util.WebUtils;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
+import java.util.List;
 
 public class PuntuacionController {
 
@@ -45,6 +49,7 @@ public class PuntuacionController {
 
                     ItemBiblioteca puntuacionUsuario = usuarioService.findByIdEmail(usuario.getEmail(), idJuego);
                     puntuacionUsuario.setPuntuacion(puntuacion);
+
                     if (usuarioService.borrarJuegoBiblioteca(usuario.getEmail(), idJuego) && usuarioService.create(puntuacionUsuario)) {
                         respuesta.addProperty(Constantes.STATUS, Constantes.OK);
                     } else {

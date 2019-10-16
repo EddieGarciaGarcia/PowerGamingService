@@ -57,6 +57,7 @@ public class BibliotecaController {
                         juegos = juegoService.findByIDs(juegoIDs, idiomaWeb);
                     }
                     respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+                    respuesta.add("Puntuacion", new Gson().toJsonTree(biblioteca, new TypeToken<List<ItemBiblioteca>>(){}.getType()).getAsJsonArray());
                     respuesta.add("JuegosBiblioteca", new Gson().toJsonTree(juegos, new TypeToken<List<Juego>>(){}.getType()).getAsJsonArray());
                 } else if ("DeleteJuego".equalsIgnoreCase(action)) {
                     if (usuarioService.borrarJuegoBiblioteca(usuario.getEmail(), idJuego)) {

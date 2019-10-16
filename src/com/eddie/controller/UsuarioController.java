@@ -1,5 +1,6 @@
 package com.eddie.controller;
 
+import com.eddie.ecommerce.model.Juego;
 import com.eddie.ecommerce.model.Response;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.UsuarioService;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class UsuarioController {
@@ -100,6 +102,7 @@ public class UsuarioController {
             }
             if(actualizado){
                 respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+                respuesta.add("usuario",  new Gson().toJsonTree(usuarioLogged, new TypeToken<Usuario>(){}.getType()).getAsJsonArray());
             }else{
                 respuesta.addProperty(Constantes.STATUS, Constantes.KO);
                 respuesta.addProperty(Constantes.STATUSMSG, Error.UPDATE_FAIL.getCode());
