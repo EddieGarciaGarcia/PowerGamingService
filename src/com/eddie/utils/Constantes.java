@@ -1,4 +1,4 @@
-package com.eddie.utils.util;
+package com.eddie.utils;
 
 public interface Constantes {
     public static String NOMBRE = "Nombre";
@@ -10,10 +10,13 @@ public interface Constantes {
 
     public static String IDJUEGO = "IdJuego";
 
+    public static String IDLOGIN = "IdLogin";
+
     public static String KO = "KO";
     public static String OK = "OK";
-    public static String IDLOGIN = "IdLogin";
     public static String STATUS = "Status" ;
     public static String STATUSMSG = "StatusMsg" ;
-    public static String SALIDA = "Salida";
+
+    public static String RUTA_PROPERTIES = "/apps/PowerGaming/properties/";
+    public static String NOMBRE_CACHE_LOGIN = "CacheLogin";
 }

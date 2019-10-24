@@ -1,4 +1,4 @@
-package com.eddie.utils.util;
+package com.eddie.utils;
 
 public enum Error {
     GENERIC_ERROR("E0", "Error general en back o en el servlet principal"),

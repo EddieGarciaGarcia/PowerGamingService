@@ -1,4 +1,4 @@
-package com.eddie.utils.util;
+package com.eddie.utils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

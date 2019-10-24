@@ -1,12 +1,11 @@
 package com.eddie.controller;
 
-import com.eddie.ecommerce.model.Juego;
-import com.eddie.ecommerce.model.Response;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.utils.util.*;
-import com.eddie.utils.util.Error;
+import com.eddie.ecommerce.utils.CacheManager;
+import com.eddie.utils.*;
+import com.eddie.utils.Error;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -16,12 +15,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-
 
 public class UsuarioController {
     private static Logger logger = LogManager.getLogger(UsuarioController.class);
-    private static UsuarioService usuarioService;
+    private static UsuarioService usuarioService = null;
 
     public UsuarioController() {
         usuarioService = new UsuarioServiceImpl();
@@ -44,7 +41,7 @@ public class UsuarioController {
             } else {
                 String idLogin = WebUtils.generateSessionId();
 
-                WebUtils.cache().put(idLogin,usuario);
+                CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).put(idLogin,usuario);
 
                 usuario.setIdLogin(idLogin);
                 respuesta.addProperty(Constantes.STATUS, Constantes.OK);
@@ -52,7 +49,7 @@ public class UsuarioController {
             }
         } else if ("Logout".equalsIgnoreCase(action)){
             String idLogin = json.get("IdLogin").getAsString();
-            WebUtils.cache().remove(idLogin);
+            CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).remove(idLogin);
             respuesta.addProperty(Constantes.STATUS, Constantes.OK);
         } else if ("Registro".equalsIgnoreCase(action)) {
             usuario = new Usuario();
@@ -72,41 +69,37 @@ public class UsuarioController {
             } else {
                 usuario.setNombreUser(usuario.getNombre());
             }
-            boolean creado = false;
             if (usuario.getEmail() != null && usuario.getNombre() != null && usuario.getFechaNacimiento() != null && usuario.getPassword() != null) {
-                creado = usuarioService.create(usuario);
-            }
-            if(creado){
-                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
-            }else{
-                respuesta.addProperty(Constantes.STATUS, Constantes.KO);
-                respuesta.addProperty(Constantes.STATUSMSG, Error.CREATE_FAIL.getCode());
-                logger.warn(Error.CREATE_FAIL.getMsg());
+                if(usuarioService.create(usuario)){
+                    respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+                }else{
+                    respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                    respuesta.addProperty(Constantes.STATUSMSG, Error.CREATE_FAIL.getCode());
+                    logger.warn(Error.CREATE_FAIL.getMsg());
+                }
             }
         }else if ("Configuracion".equalsIgnoreCase(action)) {
             String idLogin =json.get(Constantes.IDLOGIN).getAsString();
-            Usuario usuarioLogged = WebUtils.cache().get(idLogin);
+            usuario = CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).get(idLogin);
 
-            usuarioLogged.setNombre(LimpiezaValidacion.validNombre(json.get(Constantes.NOMBRE).getAsString()));
-            usuarioLogged.setApellido1(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO1).getAsString()));
-            usuarioLogged.setApellido2(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO2).getAsString()));
-            usuarioLogged.setEmail(LimpiezaValidacion.validEmail(json.get(Constantes.EMAIL).getAsString()));
-            usuarioLogged.setTelefono(LimpiezaValidacion.validTelefono(json.get(Constantes.TELEFONO).getAsString()));
-            usuarioLogged.setPassword(LimpiezaValidacion.validPassword(json.get(Constantes.PASSWORD).getAsString()));
-            usuarioLogged.setNombreUser(LimpiezaValidacion.validNombreUser(json.get("NombreUsuario").getAsString()));
+            usuario.setNombre(LimpiezaValidacion.validNombre(json.get(Constantes.NOMBRE).getAsString()));
+            usuario.setApellido1(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO1).getAsString()));
+            usuario.setApellido2(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO2).getAsString()));
+            usuario.setEmail(LimpiezaValidacion.validEmail(json.get(Constantes.EMAIL).getAsString()));
+            usuario.setTelefono(LimpiezaValidacion.validTelefono(json.get(Constantes.TELEFONO).getAsString()));
+            usuario.setPassword(LimpiezaValidacion.validPassword(json.get(Constantes.PASSWORD).getAsString()));
+            usuario.setNombreUser(LimpiezaValidacion.validNombreUser(json.get("NombreUsuario").getAsString()));
 
-            boolean actualizado = false;
-            if (usuarioLogged.getNombre() != null || usuarioLogged.getApellido1() != null || usuarioLogged.getApellido2() != null
-                    || usuarioLogged.getTelefono() != null || usuarioLogged.getPassword() != null || usuarioLogged.getNombreUser() != null) {
-                actualizado = usuarioService.update(usuarioLogged);
-            }
-            if(actualizado){
-                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
-                respuesta.add("usuario",  new Gson().toJsonTree(usuarioLogged, new TypeToken<Usuario>(){}.getType()).getAsJsonArray());
-            }else{
-                respuesta.addProperty(Constantes.STATUS, Constantes.KO);
-                respuesta.addProperty(Constantes.STATUSMSG, Error.UPDATE_FAIL.getCode());
-                logger.warn(Error.UPDATE_FAIL.getMsg());
+            if (usuario.getNombre() != null || usuario.getApellido1() != null || usuario.getApellido2() != null
+                    || usuario.getTelefono() != null || usuario.getPassword() != null || usuario.getNombreUser() != null) {
+                if(usuarioService.update(usuario)){
+                    respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+                    respuesta.add("usuario",  new Gson().toJsonTree(usuario, new TypeToken<Usuario>(){}.getType()).getAsJsonArray());
+                }else{
+                    respuesta.addProperty(Constantes.STATUS, Constantes.KO);
+                    respuesta.addProperty(Constantes.STATUSMSG, Error.UPDATE_FAIL.getCode());
+                    logger.warn(Error.UPDATE_FAIL.getMsg());
+                }
             }
         }
         return respuesta;

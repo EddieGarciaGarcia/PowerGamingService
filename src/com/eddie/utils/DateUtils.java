@@ -1,4 +1,4 @@
-package com.eddie.utils.util;
+package com.eddie.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

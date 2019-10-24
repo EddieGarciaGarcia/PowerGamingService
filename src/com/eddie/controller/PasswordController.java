@@ -1,14 +1,13 @@
 package com.eddie.controller;
 
-import com.eddie.ecommerce.model.Response;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.MailService;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.MailServiceImpl;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.utils.util.Constantes;
-import com.eddie.utils.util.Error;
-import com.eddie.utils.util.LimpiezaValidacion;
+import com.eddie.utils.Constantes;
+import com.eddie.utils.Error;
+import com.eddie.utils.LimpiezaValidacion;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
@@ -16,8 +15,8 @@ import org.apache.logging.log4j.Logger;
 
 public class PasswordController {
     private static Logger logger = LogManager.getLogger(PasswordController.class);
-    private static UsuarioService usuarioService;
-    private static MailService mailService;
+    private static UsuarioService usuarioService = null;
+    private static MailService mailService = null;
 
     public PasswordController() {
         usuarioService = new UsuarioServiceImpl();

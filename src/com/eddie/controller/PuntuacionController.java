@@ -2,30 +2,25 @@ package com.eddie.controller;
 
 import com.eddie.ecommerce.exceptions.DataException;
 import com.eddie.ecommerce.model.ItemBiblioteca;
-import com.eddie.ecommerce.model.Juego;
-import com.eddie.ecommerce.model.Response;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.JuegoService;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.JuegoServiceImpl;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.utils.util.Constantes;
-import com.eddie.utils.util.Error;
-import com.eddie.utils.util.WebUtils;
-import com.google.gson.Gson;
+import com.eddie.ecommerce.utils.CacheManager;
+import com.eddie.utils.Constantes;
+import com.eddie.utils.Error;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Date;
-import java.util.List;
 
 public class PuntuacionController {
 
-    private static UsuarioService usuarioService;
-    private static JuegoService juegoService;
+    private static UsuarioService usuarioService = null;
+    private static JuegoService juegoService = null;
     private static Logger logger = LogManager.getLogger(PuntuacionController.class);
 
     public PuntuacionController() {
@@ -40,7 +35,7 @@ public class PuntuacionController {
         String idLogin = json.get(Constantes.IDLOGIN).getAsString();
 
         //Controlar que esta logeado
-        Usuario usuario = WebUtils.cache().get(idLogin);
+        Usuario usuario = CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).get(idLogin);
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString()!= null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
             try {

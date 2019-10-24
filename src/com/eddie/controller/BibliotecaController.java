@@ -2,15 +2,14 @@ package com.eddie.controller;
 
 import com.eddie.ecommerce.model.ItemBiblioteca;
 import com.eddie.ecommerce.model.Juego;
-import com.eddie.ecommerce.model.Response;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.JuegoService;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.JuegoServiceImpl;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.utils.util.Constantes;
-import com.eddie.utils.util.Error;
-import com.eddie.utils.util.WebUtils;
+import com.eddie.ecommerce.utils.CacheManager;
+import com.eddie.utils.Constantes;
+import com.eddie.utils.Error;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -40,7 +39,7 @@ public class BibliotecaController {
 
         //Controlar que esta logeado
 
-        Usuario usuario = WebUtils.cache().get(idLogin);
+        Usuario usuario = CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).get(idLogin);
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString()!= null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
             try {

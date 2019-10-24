@@ -1,4 +1,4 @@
-package com.eddie.utils.util;
+package com.eddie.utils;
 
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.utils.CacheManager;
@@ -36,9 +36,6 @@ public class WebUtils {
 		return RandomStringUtils.random(40);
 	}
 
-	public static Cache<String, Usuario> cache() {
-		return CacheManager.getCacheLogin(com.eddie.ecommerce.utils.Constantes.NOMBRE_CACHE_lOGIN);
-	}
 
 	/**
 	 * Determina si un String está vacio o es nulo
