@@ -31,9 +31,6 @@ public class InicioController {
             if("DatosInicio".equalsIgnoreCase(action)) {
                 respuesta.add("Todos", new Gson().toJsonTree(juegoService.findAllByDate(idiomaWeb), new TypeToken<List<Juego>>(){}.getType()).getAsJsonArray());
                 respuesta.add("Valoracion", new Gson().toJsonTree(juegoService.findAllByValoracion(idiomaWeb), new TypeToken<List<Juego>>(){}.getType()).getAsJsonArray());
-                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
-            }else if("DatosPrecarga".equalsIgnoreCase(action)) {
-                //Precarga de todos los datos en cache
                 respuesta.add("DatosPrecargaJuego", new Gson().toJsonTree(juegoService.datosCacheWeb(idiomaWeb), new TypeToken<HashMap<String, List<?>>>(){}.getType()).getAsJsonObject());
                 respuesta.add("Pais", new Gson().toJsonTree(paisService.findAll(), new TypeToken<List<Pais>>(){}.getType()).getAsJsonArray());
                 respuesta.addProperty(Constantes.STATUS, Constantes.OK);
