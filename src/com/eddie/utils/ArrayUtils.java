@@ -18,7 +18,7 @@ public class ArrayUtils {
 	public static final int[] asInteger(String ss[]) {
 		int[] ii = new int[ss.length];
 		for (int i = 0; i<ss.length; i++) {
-			ii[i] = Integer.valueOf(ss[i]);
+			ii[i] = Integer.parseInt(ss[i]);
 		}
 		return ii;
 	}

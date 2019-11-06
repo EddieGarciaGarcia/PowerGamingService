@@ -18,7 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,13 +45,30 @@ public class JuegoController {
         }
         if ("Buscar".equalsIgnoreCase(action)) {
                 // Recuperar parametros
-                String nombre = json.has(Constantes.NOMBRE) ? json.get(Constantes.NOMBRE).getAsString() : null;
-                String[] categorias = json.has("Categorias") ? json.get("Categorias").getAsString().split(",") : null;
-                String creador = json.has("Creador") ? json.get("Creador").getAsString() : null;
-                String[] plataforma = json.has("Plataformas") ? json.get("Plataformas").getAsString().split(",") : null;
-                String[] idioma = json.has("Idioma") ? json.get("Idioma").getAsString().split(",") : null;
-                String fecha = json.has("Fecha") ? json.get("Fecha").getAsString() : null;
-
+            String nombre = json.has(Constantes.NOMBRE) ? json.get(Constantes.NOMBRE).getAsString() : null;
+            String creador = json.has("Creador") ? json.get("Creador").getAsString() : null;
+            String fecha = json.has("Fecha") ? json.get("Fecha").getAsString() : null;
+            String[] categorias = null;
+            if (json.has("Categorias")) {
+                categorias = new String[json.get("Categorias").getAsJsonArray().size()];
+                for (int i = 0; i < json.get("Categorias").getAsJsonArray().size(); i++) {
+                    categorias[i] = json.get("Categorias").getAsJsonArray().get(i).getAsString();
+                }
+            }
+            String[] plataforma = null;
+            if(json.has("Plataformas")) {
+                plataforma = new String[json.get("Plataformas").getAsJsonArray().size()];
+                for(int i=0 ; i<json.get("Plataformas").getAsJsonArray().size(); i++){
+                    plataforma[i] = json.get("Plataformas").getAsJsonArray().get(i).getAsString();
+                }
+            }
+            String[] idioma = null;
+            if(json.has("Idioma")) {
+                idioma = new String[json.get("Idioma").getAsJsonArray().size()];
+                for(int i=0 ; i<json.get("Idioma").getAsJsonArray().size(); i++){
+                    idioma[i] = json.get("Idioma").getAsJsonArray().get(i).getAsString();
+                }
+            }
                 String nombreValid = LimpiezaValidacion.validNombreJuego(nombre);
 
                 JuegoCriteria jc = new JuegoCriteria();
