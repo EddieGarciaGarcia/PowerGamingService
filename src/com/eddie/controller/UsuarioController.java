@@ -3,13 +3,14 @@ package com.eddie.controller;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.ecommerce.utils.CacheManager;
+import com.eddie.gestor.ConfigurationManager;
+import com.eddie.gestor.RedisCache;
 import com.eddie.utils.*;
 import com.eddie.utils.Error;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import org.apache.commons.lang3.RandomUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,13 +25,14 @@ public class UsuarioController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws Exception {
-        JsonObject json = entrada.getAsJsonObject();
+    public static JsonObject procesarPeticion(JsonObject datos) throws Exception {
+        JsonObject json = datos.get("Entrada").getAsJsonObject();
+        String action = datos.get("Action").getAsString();
         JsonObject respuesta = new JsonObject();
         Usuario usuario;
 
         if ("Login".equalsIgnoreCase(action)) {
-            String email = LimpiezaValidacion.validEmail(json.get(Constantes.EMAIL).getAsString());
+            String email = json.get(Constantes.EMAIL).getAsString();
             String password = LimpiezaValidacion.validPassword(json.get(Constantes.PASSWORD).getAsString());
 
             usuario = usuarioService.login(email, password);
@@ -39,9 +41,8 @@ public class UsuarioController {
                 respuesta.addProperty(Constantes.STATUSMSG, Error.USUARIO_NOT_EXIST.getCode());
                 logger.warn(Error.USUARIO_NOT_EXIST.getMsg());
             } else {
-                String idLogin = WebUtils.generateSessionId();
-
-                CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).put(idLogin,usuario);
+                String idLogin = String.valueOf(RandomUtils.nextInt());
+                RedisCache.getInstance().setValue(idLogin, usuario, Integer.parseInt(ConfigurationManager.getInstance().getParameter(Constantes.TIME_EXPIRY_KEY_REDIS)));
 
                 usuario.setIdLogin(idLogin);
                 respuesta.addProperty(Constantes.STATUS, Constantes.OK);
@@ -49,7 +50,7 @@ public class UsuarioController {
             }
         } else if ("Logout".equalsIgnoreCase(action)){
             String idLogin = json.get("IdLogin").getAsString();
-            CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).remove(idLogin);
+            RedisCache.getInstance().delValue(idLogin);
             respuesta.addProperty(Constantes.STATUS, Constantes.OK);
         } else if ("Registro".equalsIgnoreCase(action)) {
             usuario = new Usuario();
@@ -80,7 +81,7 @@ public class UsuarioController {
             }
         }else if ("Configuracion".equalsIgnoreCase(action)) {
             String idLogin =json.get(Constantes.IDLOGIN).getAsString();
-            usuario = CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).get(idLogin);
+            usuario = (Usuario) RedisCache.getInstance().getValue(idLogin);
 
             usuario.setNombre(LimpiezaValidacion.validNombre(json.get(Constantes.NOMBRE).getAsString()));
             usuario.setApellido1(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO1).getAsString()));

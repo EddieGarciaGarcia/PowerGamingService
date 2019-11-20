@@ -23,8 +23,9 @@ public class PasswordController {
         mailService = new MailServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws Exception {
-        JsonObject json = entrada.getAsJsonObject();
+    public static JsonObject procesarPeticion(JsonObject datos) throws Exception {
+        JsonObject json = datos.get("Entrada").getAsJsonObject();
+        String action = datos.get("Action").getAsString();
         JsonObject respuesta = new JsonObject();
 
         String email = LimpiezaValidacion.validEmail(json.has(Constantes.EMAIL) ? json.get(Constantes.EMAIL).getAsString() : null);

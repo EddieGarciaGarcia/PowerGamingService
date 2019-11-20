@@ -25,7 +25,9 @@ public class InicioController {
         juegoService = new JuegoServiceImpl();
         paisService = new PaisServiceImpl();
     }
-    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb){
+    public static JsonObject procesarPeticion(JsonObject datos){
+        String action = datos.get("Action").getAsString();
+        String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
         try {
             if("DatosInicio".equalsIgnoreCase(action)) {

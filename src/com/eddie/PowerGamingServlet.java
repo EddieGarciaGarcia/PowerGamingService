@@ -2,7 +2,6 @@ package com.eddie;
 
 import com.eddie.utils.Constantes;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,6 +44,7 @@ public class PowerGamingServlet extends HttpServlet {
         try {
             Scanner scanner = new Scanner(request.getInputStream(), "UTF-8");
             StringBuilder sbResult = new StringBuilder();
+
             while (scanner.hasNextLine()) {
                 sbResult.append(scanner.nextLine());
             }
@@ -54,14 +54,12 @@ public class PowerGamingServlet extends HttpServlet {
             if(!jsonRequest.get("Metodo").getAsString().equals("Juego") || !jsonRequest.get("Metodo").getAsString().equals("Biblioteca")|| !jsonRequest.get("Metodo").getAsString().equals("Puntuacion")
                     || !jsonRequest.get("Metodo").getAsString().equals("Inicio")|| !jsonRequest.get("Metodo").getAsString().equals("Password")|| !jsonRequest.get("Metodo").getAsString().equals("Usuario")) {
 
-                Class datos = JsonElement.class;
-                Class action = String.class;
-                Class idiomaWeb = String.class;
+                Class datos = JsonObject.class;
                 Class<?> aClass = Class.forName("com.eddie.controller.".concat(jsonRequest.get("Metodo").getAsString()).concat(jsonRequest.get("Servicio").getAsString()));
                 Object obj = aClass.newInstance();
 
-                Method method = aClass.getDeclaredMethod("procesarPeticion", datos, action, idiomaWeb);
-                jsonResponse = (JsonObject) method.invoke(obj, jsonRequest.get("Entrada"), jsonRequest.get("Action").getAsString(), jsonRequest.get("IdiomaWeb").getAsString());
+                Method method = aClass.getDeclaredMethod("procesarPeticion", datos);
+                jsonResponse = (JsonObject) method.invoke(obj, jsonRequest);
 
             }else{
                 jsonResponse.addProperty("Status","KO");

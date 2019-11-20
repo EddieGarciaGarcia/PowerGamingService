@@ -6,19 +6,17 @@ import com.eddie.ecommerce.service.JuegoService;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.JuegoServiceImpl;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.ecommerce.utils.CacheManager;
+import com.eddie.gestor.RedisCache;
 import com.eddie.utils.ArrayUtils;
 import com.eddie.utils.Constantes;
 import com.eddie.utils.LimpiezaValidacion;
 import com.eddie.utils.WebUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,18 +28,19 @@ public class JuegoController {
 
 
     public JuegoController() {
-        super();
         juegoService = new JuegoServiceImpl();
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) throws DataException {
-        JsonObject json = entrada.getAsJsonObject();
+    public static JsonObject procesarPeticion(JsonObject datos) throws DataException {
+        JsonObject json = datos.get("Entrada").getAsJsonObject();
+        String action = datos.get("Action").getAsString();
+        String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
         Usuario usuario = null;
         String idLogin =json.has(Constantes.IDLOGIN) ? json.get(Constantes.IDLOGIN).getAsString() : null;
         if (idLogin!=null) {
-            usuario = CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).get(idLogin);
+            usuario =(Usuario) RedisCache.getInstance().getValue(idLogin);
         }
         if ("Buscar".equalsIgnoreCase(action)) {
                 // Recuperar parametros

@@ -7,11 +7,10 @@ import com.eddie.ecommerce.service.JuegoService;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.JuegoServiceImpl;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.ecommerce.utils.CacheManager;
+import com.eddie.gestor.RedisCache;
 import com.eddie.utils.Constantes;
 import com.eddie.utils.Error;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
@@ -31,15 +30,16 @@ public class BibliotecaController {
         juegoService = new JuegoServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonElement entrada, String action, String idiomaWeb) {
-        JsonObject json = entrada.getAsJsonObject();
+    public static JsonObject procesarPeticion(JsonObject datos) {
+        JsonObject json = datos.get("Entrada").getAsJsonObject();
+        String action = datos.get("Action").getAsString();
+        String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
 
         String idLogin = json.get(Constantes.IDLOGIN).getAsString();
 
         //Controlar que esta logeado
-
-        Usuario usuario = CacheManager.getCacheLogin(Constantes.NOMBRE_CACHE_LOGIN).get(idLogin);
+        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(idLogin);
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString()!= null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
             try {
@@ -52,7 +52,7 @@ public class BibliotecaController {
                     }
                     List<Juego> juegos = new ArrayList<>();
 
-                    if (juegoIDs != null && !juegoIDs.isEmpty()) {
+                    if (!juegoIDs.isEmpty()) {
                         juegos = juegoService.findByIDs(juegoIDs, idiomaWeb);
                     }
                     respuesta.addProperty(Constantes.STATUS, Constantes.OK);
