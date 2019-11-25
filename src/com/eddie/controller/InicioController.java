@@ -1,18 +1,20 @@
 package com.eddie.controller;
 
-import com.eddie.ecommerce.model.*;
-import com.eddie.ecommerce.service.*;
-import com.eddie.ecommerce.service.impl.*;
+import com.eddie.ecommerce.model.Juego;
+import com.eddie.ecommerce.model.Pais;
+import com.eddie.ecommerce.service.JuegoService;
+import com.eddie.ecommerce.service.PaisService;
+import com.eddie.ecommerce.service.impl.JuegoServiceImpl;
+import com.eddie.ecommerce.service.impl.PaisServiceImpl;
 import com.eddie.utils.Constantes;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class InicioController {
 
@@ -25,18 +27,17 @@ public class InicioController {
         juegoService = new JuegoServiceImpl();
         paisService = new PaisServiceImpl();
     }
-    public static JsonObject procesarPeticion(JsonObject datos){
-        String action = datos.get("Action").getAsString();
+
+    public static JsonObject procesarPeticion(JsonObject datos) {
         String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
         try {
-            if("DatosInicio".equalsIgnoreCase(action)) {
-                respuesta.add("Todos", new Gson().toJsonTree(juegoService.findAllByDate(idiomaWeb), new TypeToken<List<Juego>>(){}.getType()).getAsJsonArray());
-                respuesta.add("Valoracion", new Gson().toJsonTree(juegoService.findAllByValoracion(idiomaWeb), new TypeToken<List<Juego>>(){}.getType()).getAsJsonArray());
-                respuesta.add("DatosPrecargaJuego", new Gson().toJsonTree(juegoService.datosCacheWeb(idiomaWeb), new TypeToken<HashMap<String, List<?>>>(){}.getType()).getAsJsonObject());
-                respuesta.add("Pais", new Gson().toJsonTree(paisService.findAll(), new TypeToken<List<Pais>>(){}.getType()).getAsJsonArray());
-                respuesta.addProperty(Constantes.STATUS, Constantes.OK);
-            }
+            respuesta.add("Todos", new Gson().toJsonTree(juegoService.findAllByDate(idiomaWeb), new TypeToken<List<Juego>>() {}.getType()).getAsJsonArray());
+            respuesta.add("Valoracion", new Gson().toJsonTree(juegoService.findAllByValoracion(idiomaWeb), new TypeToken<List<Juego>>() {}.getType()).getAsJsonArray());
+            respuesta.add("DatosPrecargaJuego", new Gson().toJsonTree(juegoService.datosCacheWeb(idiomaWeb), new TypeToken<HashMap<String, List<?>>>() {}.getType()).getAsJsonObject());
+            respuesta.add("Pais", new Gson().toJsonTree(paisService.findAll(), new TypeToken<List<Pais>>() {}.getType()).getAsJsonArray());
+            respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+
         } catch (com.eddie.ecommerce.exceptions.DataException e) {
             logger.debug(e);
         }

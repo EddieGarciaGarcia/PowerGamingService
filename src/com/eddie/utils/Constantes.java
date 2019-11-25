@@ -23,4 +23,5 @@ public interface Constantes {
     public static final String SESSION_USER = "session_usuario";
     public static final String USER_LOCALE = "user-locale";
     public static final String TIME_EXPIRY_KEY_REDIS = "redis.time.expired.idtoken";
+    public static final String PUNTUACION = "Puntuacion";
 }

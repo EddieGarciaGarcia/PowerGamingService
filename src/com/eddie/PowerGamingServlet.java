@@ -1,5 +1,6 @@
 package com.eddie;
 
+import com.eddie.gestor.RulesEngine;
 import com.eddie.utils.Constantes;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -7,10 +8,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.eddie.utils.Error;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.Scanner;
@@ -37,7 +40,7 @@ public class PowerGamingServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         response.addHeader("Access-Control-Allow-Origin", "*");
         response.setCharacterEncoding("UTF-8");
         JsonObject jsonRequest = null;
@@ -49,23 +52,12 @@ public class PowerGamingServlet extends HttpServlet {
                 sbResult.append(scanner.nextLine());
             }
             jsonRequest = new Gson().fromJson(sbResult.toString(), JsonObject.class);
+
             JsonObject jsonResponse = new JsonObject();
 
-            if(!jsonRequest.get("Metodo").getAsString().equals("Juego") || !jsonRequest.get("Metodo").getAsString().equals("Biblioteca")|| !jsonRequest.get("Metodo").getAsString().equals("Puntuacion")
-                    || !jsonRequest.get("Metodo").getAsString().equals("Inicio")|| !jsonRequest.get("Metodo").getAsString().equals("Password")|| !jsonRequest.get("Metodo").getAsString().equals("Usuario")) {
+            //envias la request y recibes la response
+            jsonResponse = enviarPeticion(jsonRequest, jsonResponse);
 
-                Class datos = JsonObject.class;
-                Class<?> aClass = Class.forName("com.eddie.controller.".concat(jsonRequest.get("Metodo").getAsString()).concat(jsonRequest.get("Servicio").getAsString()));
-                Object obj = aClass.newInstance();
-
-                Method method = aClass.getDeclaredMethod("procesarPeticion", datos);
-                jsonResponse = (JsonObject) method.invoke(obj, jsonRequest);
-
-            }else{
-                jsonResponse.addProperty("Status","KO");
-                jsonResponse.addProperty("StatusMsg",Error.INVALID_REQUEST.getCode());
-                logger.warn(Error.INVALID_REQUEST.getMsg());
-            }
 
             PrintWriter out = response.getWriter();
             response.setContentType("application/json;charset=UTF-8");
@@ -74,9 +66,27 @@ public class PowerGamingServlet extends HttpServlet {
 
             out.flush();
             out.close();
-        } catch (Exception e) {
+        } catch (IOException | IllegalAccessException | InstantiationException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
             logger.fatal("Error Grave en servlet Principal");
         }
+    }
+
+    private static JsonObject enviarPeticion(JsonObject jsonRequest, JsonObject jsonResponse) throws IllegalAccessException, InstantiationException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException {
+        if(RulesEngine.getInstance().comprobacion(jsonRequest.get("Metodo").getAsString())){
+
+            Class datos = JsonObject.class;
+            Class<?> aClass = Class.forName("com.eddie.controller.".concat(jsonRequest.get("Metodo").getAsString()).concat(jsonRequest.get("Servicio").getAsString()));
+            Object obj = aClass.newInstance();
+
+            Method method = aClass.getDeclaredMethod("procesarPeticion", datos);
+            jsonResponse = (JsonObject) method.invoke(obj, jsonRequest);
+
+        }else{
+            jsonResponse.addProperty("Status","KO");
+            jsonResponse.addProperty("StatusMsg",Error.INVALID_REQUEST.getCode());
+            logger.warn(Error.INVALID_REQUEST.getMsg());
+        }
+        return jsonResponse;
     }
 
 

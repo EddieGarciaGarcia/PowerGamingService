@@ -3,8 +3,8 @@ package com.eddie.controller;
 import com.eddie.ecommerce.exceptions.DataException;
 import com.eddie.ecommerce.model.ItemBiblioteca;
 import com.eddie.ecommerce.model.Usuario;
-import com.eddie.ecommerce.service.UsuarioService;
-import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
+import com.eddie.ecommerce.service.JuegoService;
+import com.eddie.ecommerce.service.impl.JuegoServiceImpl;
 import com.eddie.gestor.RedisCache;
 import com.eddie.utils.Constantes;
 import com.eddie.utils.Error;
@@ -12,13 +12,14 @@ import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class PuntuacionController {
+import java.util.Date;
 
-    private static UsuarioService usuarioService = null;
-    private static Logger logger = LogManager.getLogger(PuntuacionController.class);
+public class AddComentarioController {
+    private static JuegoService juegoService = null;
+    private static Logger logger = LogManager.getLogger(AddComentarioController.class);
 
-    public PuntuacionController() {
-        usuarioService = new UsuarioServiceImpl();
+    public AddComentarioController() {
+        juegoService = new JuegoServiceImpl();
     }
 
     public static JsonObject procesarPeticion(JsonObject datos) throws DataException {
@@ -27,13 +28,14 @@ public class PuntuacionController {
 
         //Controlar que esta logeado
         Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString());
-        if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))
-                && (json.get(Constantes.PUNTUACION).getAsString() != null || !json.get(Constantes.PUNTUACION).getAsString().equals(""))) {
-            Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
-            ItemBiblioteca puntuacionUsuario = usuarioService.findByIdEmail(usuario.getEmail(), idJuego);
-            puntuacionUsuario.setPuntuacion(Integer.valueOf(json.get(Constantes.PUNTUACION).getAsString()));
-
-            if (usuarioService.borrarJuegoBiblioteca(usuario.getEmail(), idJuego) && usuarioService.create(puntuacionUsuario)) {
+        if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
+            ItemBiblioteca itemBiblioteca = new ItemBiblioteca();
+            itemBiblioteca.setIdJuego(Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString()));
+            itemBiblioteca.setComentario(json.get("Comentario").getAsString());
+            itemBiblioteca.setEmail(usuario.getEmail());
+            Date date = new Date();
+            itemBiblioteca.setFechaComentario(new java.sql.Date(date.getTime()));
+            if (juegoService.addComent(itemBiblioteca)) {
                 respuesta.addProperty(Constantes.STATUS, Constantes.OK);
             } else {
                 respuesta.addProperty(Constantes.STATUS, Constantes.KO);
@@ -41,7 +43,7 @@ public class PuntuacionController {
                 logger.warn(Error.UPDATE_FAIL.getMsg());
             }
         } else {
-            respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+            respuesta.addProperty(Constantes.STATUS, Constantes.KO);
             respuesta.addProperty(Constantes.STATUSMSG, Error.GENERIC_ERROR.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
