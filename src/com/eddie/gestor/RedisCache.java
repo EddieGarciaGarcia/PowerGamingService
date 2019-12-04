@@ -1,5 +1,7 @@
 package com.eddie.gestor;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -9,9 +11,11 @@ import java.io.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+
 public class RedisCache {
     private static RedisCache instance = null;
     private static JedisPool redisPool = null;
+    private static Logger logger = LogManager.getLogger(RedisCache.class);
 
     public synchronized static RedisCache getInstance() {
         if (instance == null) {
@@ -20,7 +24,6 @@ public class RedisCache {
         }
         return instance;
     }
-
     private static byte[] compress(Object object) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         GZIPOutputStream gzip = new GZIPOutputStream(buffer);
@@ -60,20 +63,20 @@ public class RedisCache {
         }
     }
 
-
-
     protected void init() {
         if (redisPool == null) {
             JedisPoolConfig poolConfig = new JedisPoolConfig();
             poolConfigParams(poolConfig);
-            redisPool = new JedisPool(poolConfig, "sdsa",6379 , Protocol.DEFAULT_TIMEOUT, null);
+            redisPool = new JedisPool(poolConfig,"127.0.0.1",6379, Protocol.DEFAULT_TIMEOUT, null,0);
         }
     }
 
-    public Jedis getClient() {
+    public Jedis getClient(int database) {
         try {
             if (redisPool != null) {
-                return redisPool.getResource();
+                Jedis jedis = redisPool.getResource();
+                jedis.select(database);
+                return jedis;
             } else {
                 throw new Exception("Error conseguir pool del redis: RedisCache.java");
             }
@@ -83,8 +86,8 @@ public class RedisCache {
         return null;
     }
 
-    public Object getValue(String key) {
-        try (Jedis client = this.getClient()) {
+    public Object getValue(String key ,int database) {
+        try (Jedis client = this.getClient(database)) {
             return decompress(client.get(key.getBytes()));
         } catch (Exception e) {
             return null;
@@ -103,8 +106,8 @@ public class RedisCache {
 
     }
 
-    public boolean setValue(String key, Object value, Integer expiryTimeInSeconds) {
-        try (Jedis client = this.getClient()) {
+    public boolean setValue(String key, Object value, int database, Integer expiryTimeInSeconds) {
+        try (Jedis client = this.getClient(database)) {
             String result = "";
             if (expiryTimeInSeconds != null && expiryTimeInSeconds > 0) {
                 result = client.setex(key.getBytes(), expiryTimeInSeconds, compress(value));
@@ -117,13 +120,14 @@ public class RedisCache {
         }
     }
 
-    public boolean setValue(Jedis client, String key, Object value, Integer expiryTimeInSeconds) {
+
+    public boolean setValue(Jedis client, String key, String value, Integer expiryTimeInSeconds) {
         try {
             String result = "";
             if (expiryTimeInSeconds != null && expiryTimeInSeconds > 0) {
-                result = client.setex(key.getBytes(), expiryTimeInSeconds, compress(value));
+                result = client.setex(key, expiryTimeInSeconds, value);
             } else {
-                result = client.set(key.getBytes(), compress(value));
+                result = client.set(key, value);
             }
             return "OK".equalsIgnoreCase(result);
         } catch (Exception e) {
@@ -131,8 +135,8 @@ public class RedisCache {
         }
     }
 
-    public boolean delValue(String key) {
-        try (Jedis client = this.getClient()) {
+    public boolean delValue(String key,int database) {
+        try (Jedis client = this.getClient(database)) {
             return client.del(key.getBytes()) > 0;
         } catch (Exception e) {
             return false;
@@ -142,6 +146,14 @@ public class RedisCache {
     public boolean delValue(Jedis client, String key) {
         try {
             return client.del(key.getBytes()) > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean exist (String key,int database){
+        try (Jedis client = this.getClient(database)) {
+            return client.exists(key);
         } catch (Exception e) {
             return false;
         }

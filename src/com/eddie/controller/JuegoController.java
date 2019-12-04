@@ -38,7 +38,7 @@ public class JuegoController {
         Usuario usuario = null;
 
         if (json.has(Constantes.IDLOGIN)) {
-            usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString());
+            usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
         }
 
         Juego juego = null;

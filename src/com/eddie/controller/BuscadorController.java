@@ -39,7 +39,7 @@ public class BuscadorController {
         Usuario usuario = null;
 
         if (json.has(Constantes.IDLOGIN)) {
-            usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString());
+            usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
         }
 
         // Recuperar parametros
@@ -61,19 +61,19 @@ public class BuscadorController {
 
         String[] categorias = null;
         if (json.has("Categorias")) {
-            categorias = addValuesCheckBox(datos, "Categorias");
+            categorias = addValuesCheckBox(json, "Categorias");
             if (categorias.length != 0) { juegoCriteria.setCategoriaIDs(asInteger(categorias)); }
         }
 
         String[] plataforma = null;
         if (json.has("Plataformas")) {
-            plataforma = addValuesCheckBox(datos, "Plataformas");
+            plataforma = addValuesCheckBox(json, "Plataformas");
             if (plataforma.length != 0) { juegoCriteria.setPlataformaIDs(asInteger(plataforma));}
         }
 
         String[] idioma = null;
         if (json.has("Idioma")) {
-            idioma = addValuesCheckBox(datos, "idioma");
+            idioma = addValuesCheckBox(json, "idioma");
             if (idioma.length != 0) { juegoCriteria.setIdiomaIDs(idioma);}
         }
 

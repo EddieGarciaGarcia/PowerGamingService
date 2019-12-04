@@ -24,7 +24,7 @@ public class DeleteJuegoBibliotecaController {
         JsonObject respuesta = new JsonObject();
 
         //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString());
+        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
 
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             if (usuarioService.borrarJuegoBiblioteca(usuario.getEmail(), Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString()))) {

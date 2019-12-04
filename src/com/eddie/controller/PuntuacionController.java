@@ -26,7 +26,7 @@ public class PuntuacionController {
         JsonObject respuesta = new JsonObject();
 
         //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString());
+        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))
                 && (json.get(Constantes.PUNTUACION).getAsString() != null || !json.get(Constantes.PUNTUACION).getAsString().equals(""))) {
             Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());

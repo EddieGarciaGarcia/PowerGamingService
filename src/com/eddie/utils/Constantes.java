@@ -18,10 +18,19 @@ public interface Constantes {
     public static final String STATUSMSG = "StatusMsg" ;
 
     public static final String RUTA_PROPERTIES = "/apps/PowerGaming/properties/";
-    public static final String NOMBRE_CACHE_LOGIN = "CacheLogin";
 
     public static final String SESSION_USER = "session_usuario";
     public static final String USER_LOCALE = "user-locale";
     public static final String TIME_EXPIRY_KEY_REDIS = "redis.time.expired.idtoken";
+    public static final String TIME_EXPIRY_DATOS_REDIS = "redis.time.expired.datos";
     public static final String PUNTUACION = "Puntuacion";
+
+
+    public static final String CATEGORIA = "Categorias";
+    public static final String CREADORES = "Creadores";
+    public static final String PLATAFORMAS = "Plataformas";
+    public static final String IDIOMAS = "Idiomas";
+    public static final String TIPOEDICIONES = "TipoEdiciones";
+    public static final String FORMATO = "Formato";
+
 }

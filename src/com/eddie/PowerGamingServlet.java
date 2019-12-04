@@ -67,6 +67,7 @@ public class PowerGamingServlet extends HttpServlet {
             out.flush();
             out.close();
         } catch (IOException | IllegalAccessException | InstantiationException | ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
+            e.printStackTrace();
             logger.fatal("Error Grave en servlet Principal");
         }
     }
@@ -75,7 +76,7 @@ public class PowerGamingServlet extends HttpServlet {
         if(RulesEngine.getInstance().comprobacion(jsonRequest.get("Metodo").getAsString())){
 
             Class datos = JsonObject.class;
-            Class<?> aClass = Class.forName("com.eddie.controller.".concat(jsonRequest.get("Metodo").getAsString()).concat(jsonRequest.get("Servicio").getAsString()));
+            Class<?> aClass = Class.forName("com.eddie.controller.".concat(jsonRequest.get("Metodo").getAsString()).concat("Controller"));
             Object obj = aClass.newInstance();
 
             Method method = aClass.getDeclaredMethod("procesarPeticion", datos);

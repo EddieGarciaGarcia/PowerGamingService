@@ -37,7 +37,7 @@ public class BibliotecaController {
         JsonObject respuesta = new JsonObject();
 
         //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString());
+        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
 
         if (usuario != null) {
             List<ItemBiblioteca> biblioteca = usuarioService.findByUsuario(usuario.getEmail());

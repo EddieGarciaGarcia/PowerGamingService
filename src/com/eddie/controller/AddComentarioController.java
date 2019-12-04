@@ -27,7 +27,7 @@ public class AddComentarioController {
         JsonObject respuesta = new JsonObject();
 
         //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString());
+        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             ItemBiblioteca itemBiblioteca = new ItemBiblioteca();
             itemBiblioteca.setIdJuego(Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString()));

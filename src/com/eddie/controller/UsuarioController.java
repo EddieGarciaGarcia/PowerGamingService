@@ -26,9 +26,8 @@ public class UsuarioController {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         JsonObject respuesta = new JsonObject();
         Usuario usuario = null;
-
         if(json.has("IdLogin")) {
-            RedisCache.getInstance().delValue(json.get("IdLogin").getAsString());
+            RedisCache.getInstance().delValue(json.get("IdLogin").getAsString(),1);
             respuesta.addProperty(Constantes.STATUS, Constantes.OK);
         }else{
             usuario = usuarioService.login(json.get(Constantes.EMAIL).getAsString(), LimpiezaValidacion.validPassword(json.get(Constantes.PASSWORD).getAsString()));
@@ -38,10 +37,11 @@ public class UsuarioController {
                 logger.warn(Error.USUARIO_NOT_EXIST.getMsg());
             } else {
                 String idLogin = String.valueOf(RandomUtils.nextInt());
-                RedisCache.getInstance().setValue(idLogin, usuario, Integer.parseInt(ConfigurationManager.getInstance().getParameter(Constantes.TIME_EXPIRY_KEY_REDIS)));
+                RedisCache.getInstance().setValue(idLogin, usuario,1, 3600);
                 usuario.setIdLogin(idLogin);
+                usuario.setPassword(null);
                 respuesta.addProperty(Constantes.STATUS, Constantes.OK);
-                respuesta.add("usuario",  new Gson().toJsonTree(usuario, new TypeToken<Usuario>(){}.getType()).getAsJsonArray());
+                respuesta.add("usuario",  new Gson().toJsonTree(usuario, new TypeToken<Usuario>(){}.getType()).getAsJsonObject());
             }
         }
         return respuesta;
