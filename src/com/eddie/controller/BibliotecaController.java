@@ -31,13 +31,10 @@ public class BibliotecaController {
         juegoService = new JuegoServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws DataException {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws DataException {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
-
-        //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
 
         if (usuario != null) {
             List<ItemBiblioteca> biblioteca = usuarioService.findByUsuario(usuario.getEmail());
@@ -56,7 +53,7 @@ public class BibliotecaController {
             respuesta.add("JuegosBiblioteca", new Gson().toJsonTree(juegos, new TypeToken<List<Juego>>() {}.getType()).getAsJsonArray());
         } else {
             respuesta.addProperty(Constantes.STATUS, Constantes.KO);
-            respuesta.addProperty(Constantes.STATUSMSG, Error.GENERIC_ERROR.getCode());
+            respuesta.addProperty(Constantes.STATUSMSG, Error.ID_EXPIRED.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
         return respuesta;

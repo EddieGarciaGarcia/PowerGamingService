@@ -22,15 +22,12 @@ public class ConfiguracionController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws Exception {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws Exception {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         JsonObject respuesta = new JsonObject();
-        Usuario usuario = null;
 
-        if(json.has(Constantes.IDLOGIN)) {
-            usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
-
-            usuario.setNombre(LimpiezaValidacion.validNombre(json.get(Constantes.NOMBRE).getAsString()));
+        if(usuario != null) {
+            if(json.has(Constantes.NOMBRE))usuario.setNombre(LimpiezaValidacion.validNombre(json.get(Constantes.NOMBRE).getAsString()));
             usuario.setApellido1(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO1).getAsString()));
             usuario.setApellido2(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO2).getAsString()));
             usuario.setEmail(json.get(Constantes.EMAIL).getAsString());
@@ -51,7 +48,7 @@ public class ConfiguracionController {
             }
         } else {
             respuesta.addProperty(Constantes.STATUS, Constantes.KO);
-            respuesta.addProperty(Constantes.STATUSMSG, Error.GENERIC_ERROR.getCode());
+            respuesta.addProperty(Constantes.STATUSMSG, Error.ID_EXPIRED.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
         return respuesta;

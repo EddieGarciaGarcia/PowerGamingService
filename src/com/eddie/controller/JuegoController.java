@@ -31,15 +31,10 @@ public class JuegoController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws DataException {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws DataException {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
-        Usuario usuario = null;
-
-        if (json.has(Constantes.IDLOGIN)) {
-            usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
-        }
 
         Juego juego = null;
         List<ItemBiblioteca> comentarios = null;

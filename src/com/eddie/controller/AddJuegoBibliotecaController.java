@@ -19,13 +19,10 @@ public class AddJuegoBibliotecaController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws Exception {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws Exception {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         JsonObject respuesta = new JsonObject();
         ItemBiblioteca itemBiblioteca = null;
-
-        //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
 
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             itemBiblioteca = new ItemBiblioteca();
@@ -41,7 +38,7 @@ public class AddJuegoBibliotecaController {
             }
         }else{
             respuesta.addProperty(Constantes.STATUS, Constantes.KO);
-            respuesta.addProperty(Constantes.STATUSMSG, Error.GENERIC_ERROR.getCode());
+            respuesta.addProperty(Constantes.STATUSMSG, Error.ID_EXPIRED.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
         return respuesta;

@@ -19,12 +19,9 @@ public class DeleteJuegoBibliotecaController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws DataException {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws DataException {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         JsonObject respuesta = new JsonObject();
-
-        //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
 
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             if (usuarioService.borrarJuegoBiblioteca(usuario.getEmail(), Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString()))) {
@@ -34,7 +31,7 @@ public class DeleteJuegoBibliotecaController {
             }
         } else {
             respuesta.addProperty(Constantes.STATUS, Constantes.KO);
-            respuesta.addProperty(Constantes.STATUSMSG, Error.GENERIC_ERROR.getCode());
+            respuesta.addProperty(Constantes.STATUSMSG, Error.ID_EXPIRED.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
         return respuesta;

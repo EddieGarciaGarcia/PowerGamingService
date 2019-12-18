@@ -21,12 +21,11 @@ public class PuntuacionController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws DataException {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws DataException {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         JsonObject respuesta = new JsonObject();
 
-        //Controlar que esta logeado
-        Usuario usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
+
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))
                 && (json.get(Constantes.PUNTUACION).getAsString() != null || !json.get(Constantes.PUNTUACION).getAsString().equals(""))) {
             Integer idJuego = Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString());
@@ -42,7 +41,7 @@ public class PuntuacionController {
             }
         } else {
             respuesta.addProperty(Constantes.STATUS, Constantes.OK);
-            respuesta.addProperty(Constantes.STATUSMSG, Error.GENERIC_ERROR.getCode());
+            respuesta.addProperty(Constantes.STATUSMSG, Error.ID_EXPIRED.getCode());
             logger.warn(Error.GENERIC_ERROR.getMsg());
         }
         return respuesta;

@@ -18,7 +18,7 @@ public class ChangePasswordController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws Exception {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario user) throws Exception {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         JsonObject respuesta = new JsonObject();
 

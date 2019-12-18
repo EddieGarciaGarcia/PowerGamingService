@@ -12,7 +12,7 @@ public class RulesEngine {
     private static ArrayList<String> reglasEntrada = null;
 
     private RulesEngine(){
-        reglasEntrada = new ArrayList<>(Arrays.asList("Inicio","Juego","Buscador","Usuario",
+        reglasEntrada = new ArrayList<>(Arrays.asList("Inicio","Juego","Buscador",
                 "AddJuegoBiblioteca","DeleteJuegoBiblioteca","Biblioteca","Puntuacion","ChangePassword",
                 "ForgotPassword","Contacto","AddComentario","Configuracion","Registro"));
     }
@@ -41,4 +41,5 @@ public class RulesEngine {
         }
         return false;
     }
+
 }

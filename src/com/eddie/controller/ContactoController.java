@@ -1,5 +1,6 @@
 package com.eddie.controller;
 
+import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.MailService;
 import com.eddie.ecommerce.service.impl.MailServiceImpl;
 import com.eddie.utils.Constantes;
@@ -16,7 +17,7 @@ public class ContactoController {
         mailService = new MailServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws Exception {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws Exception {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
 
         JsonObject respuesta = new JsonObject();

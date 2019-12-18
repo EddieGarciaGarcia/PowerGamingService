@@ -31,16 +31,11 @@ public class BuscadorController {
         usuarioService = new UsuarioServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws DataException {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws DataException {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
         JuegoCriteria juegoCriteria = new JuegoCriteria();
-        Usuario usuario = null;
-
-        if (json.has(Constantes.IDLOGIN)) {
-            usuario = (Usuario) RedisCache.getInstance().getValue(json.get(Constantes.IDLOGIN).getAsString(),1);
-        }
 
         // Recuperar parametros
         String nombre = json.has(Constantes.NOMBRE) ? json.get(Constantes.NOMBRE).getAsString() : null;

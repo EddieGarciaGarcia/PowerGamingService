@@ -28,7 +28,7 @@ public class InicioController {
         paisService = new PaisServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) {
         String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
         try {

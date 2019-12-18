@@ -6,7 +6,8 @@ public enum Error {
     UPDATE_FAIL("E2", "Error al actualizar"),
     SEND_FAIL("E3", "Error al enviar correo"),
     USUARIO_NOT_EXIST("E4", "No existe el usuario"),
-    CREATE_FAIL("E5", "Error al crear");
+    CREATE_FAIL("E5", "Error al crear"),
+    ID_EXPIRED("E6", "Login expirado");
 
     private final String code;
     private final String msg;

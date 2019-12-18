@@ -21,7 +21,7 @@ public class ForgotPasswordController {
         mailService = new MailServiceImpl();
     }
 
-    public static JsonObject procesarPeticion(JsonObject datos) throws Exception {
+    public static JsonObject procesarPeticion(JsonObject datos, Usuario user) throws Exception {
         JsonObject json = datos.get("Entrada").getAsJsonObject();
         JsonObject respuesta = new JsonObject();
         Usuario usuario = null;
