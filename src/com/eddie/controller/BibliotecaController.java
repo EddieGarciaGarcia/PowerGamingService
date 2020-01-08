@@ -32,7 +32,6 @@ public class BibliotecaController {
     }
 
     public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws DataException {
-        JsonObject json = datos.get("Entrada").getAsJsonObject();
         String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
 
