@@ -28,14 +28,14 @@ public class RegistroController {
 
         SimpleDateFormat sdf = (SimpleDateFormat) DateUtils.FORMATODATA;
 
-        usuario.setNombre(LimpiezaValidacion.validNombre(json.get(Constantes.NOMBRE).getAsString()));
-        usuario.setApellido1(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO1).getAsString()));
-        usuario.setApellido2(LimpiezaValidacion.validApellido(json.get(Constantes.APELLIDO2).getAsString()));
-        usuario.setEmail(json.get(Constantes.EMAIL).getAsString());
-        usuario.setTelefono(LimpiezaValidacion.validTelefono(json.get(Constantes.TELEFONO).getAsString()));
-        usuario.setPassword(LimpiezaValidacion.validPassword(json.get(Constantes.PASSWORD).getAsString()));
-        usuario.setFechaNacimiento(sdf.parse(json.get("FechaNacimiento").getAsString()));
-        usuario.setGenero(LimpiezaValidacion.validGenero(json.get("Genero").getAsString()));
+        if(json.has(Constantes.NOMBRE))usuario.setNombre(json.get(Constantes.NOMBRE).getAsString());
+        if(json.has(Constantes.APELLIDO1))usuario.setApellido1(json.get(Constantes.APELLIDO1).getAsString());
+        if(json.has(Constantes.APELLIDO2)) usuario.setApellido2(json.get(Constantes.APELLIDO2).getAsString());
+        if(json.has(Constantes.EMAIL))usuario.setEmail(json.get(Constantes.EMAIL).getAsString());
+        if(json.has(Constantes.TELEFONO))usuario.setTelefono(json.get(Constantes.TELEFONO).getAsString());
+        if(json.has(Constantes.PASSWORD))usuario.setPassword(json.get(Constantes.PASSWORD).getAsString());
+        if(json.has("FechaNacimiento"))usuario.setFechaNacimiento(sdf.parse(json.get("FechaNacimiento").getAsString()));
+        if(json.has("Genero"))usuario.setGenero(json.get("Genero").getAsString());
 
         if (usuario.getApellido1() != null || usuario.getApellido2() != null) {
             usuario.setNombreUser(usuario.getNombre() + usuario.getApellido1().charAt(0) + usuario.getApellido2().charAt(0));

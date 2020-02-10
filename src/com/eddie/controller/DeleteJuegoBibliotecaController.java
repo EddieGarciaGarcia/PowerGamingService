@@ -4,7 +4,6 @@ import com.eddie.ecommerce.exceptions.DataException;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.ecommerce.service.UsuarioService;
 import com.eddie.ecommerce.service.impl.UsuarioServiceImpl;
-import com.eddie.gestor.RedisCache;
 import com.eddie.utils.Constantes;
 import com.eddie.utils.Error;
 import com.google.gson.JsonObject;
@@ -25,9 +24,9 @@ public class DeleteJuegoBibliotecaController {
 
         if (usuario != null && (json.get(Constantes.IDJUEGO).getAsString() != null || !json.get(Constantes.IDJUEGO).getAsString().equals(""))) {
             if (usuarioService.borrarJuegoBiblioteca(usuario.getEmail(), Integer.valueOf(json.get(Constantes.IDJUEGO).getAsString()))) {
-                respuesta.addProperty(Constantes.STATUS, Constantes.KO);
-            } else {
                 respuesta.addProperty(Constantes.STATUS, Constantes.OK);
+            } else {
+                respuesta.addProperty(Constantes.STATUS, Constantes.KO);
             }
         } else {
             respuesta.addProperty(Constantes.STATUS, Constantes.KO);

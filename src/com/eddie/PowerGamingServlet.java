@@ -1,17 +1,18 @@
 package com.eddie;
 
+import com.eddie.controller.BuscadorController;
+import com.eddie.controller.InicioController;
 import com.eddie.controller.UsuarioController;
+import com.eddie.ecommerce.exceptions.DataException;
 import com.eddie.ecommerce.model.Usuario;
 import com.eddie.gestor.RedisCache;
 import com.eddie.gestor.RulesEngine;
 import com.eddie.utils.Constantes;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.eddie.utils.Error;
-import org.apache.logging.log4j.core.appender.rolling.action.ZipCompressAction;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,26 +21,55 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 
 public class PowerGamingServlet extends HttpServlet {
 
     private static Properties properties;
     private static Logger logger = LogManager.getLogger(PowerGamingServlet.class);
+    private static List<String> localeSupported = new ArrayList<String>();
+
+    public PowerGamingServlet(){
+        localeSupported = new ArrayList<>(Arrays.asList("es","en"));
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
-            response.getWriter().append("Served at: ").append(request.getContextPath());
             String idquery = null != request.getParameter("idquery") ? request.getParameter("idquery") : "";
-
+            String juegos = null != request.getParameter("Juegos") ? request.getParameter("Juegos") : "";
+            String idioma = "es";
+            if(request.getParameter("Idioma") == null || request.getParameter("Idioma").isEmpty()){
+                idioma = String.valueOf(request.getHeader("accept-language").charAt(0)).concat(String.valueOf(request.getHeader("accept-language").charAt(1)));
+                if(!localeSupported.contains(idioma)){
+                    idioma = "es";
+                }
+            }else{
+                idioma = request.getParameter("Idioma");
+                if(!localeSupported.contains(idioma)){
+                    idioma = "es";
+                }
+            }
             if (idquery.equals("log4j2") || idquery.equals("WebConfiguration") || idquery.equals("DBConfiguration")) {
                 reloadProperties(idquery);
                 logger.info("Se recargaron las properties");
                 response.getWriter().append("\n ReloadProperties() OK.");
             }
+            else if (juegos.equals("Juegos")) {
+                JsonObject datos = new JsonObject();
+                datos.addProperty("IdiomaWeb", idioma);
+                Usuario usuario = null;
+                JsonObject jsonResponse = InicioController.procesarPeticion(datos, usuario);
+                PrintWriter out = response.getWriter();
+                response.setContentType("application/json;charset=UTF-8");
+                out.println(jsonResponse.get("Todos").getAsJsonArray());
+                out.flush();
+                out.close();
+            }else{
+                response.getWriter().append("Served at: ").append(request.getContextPath());
+            }
         } catch (IOException e) {
+            logger.error("Fallo al mandar los datos del web Service. ");
             e.printStackTrace();
         }
     }
@@ -59,19 +89,27 @@ public class PowerGamingServlet extends HttpServlet {
                 sbResult.append(scanner.nextLine());
             }
             jsonRequest = new Gson().fromJson(sbResult.toString(), JsonObject.class);
+
             Usuario usuario = null;
 
             JsonObject jsonResponse = new JsonObject();
 
-
-            if(jsonRequest.has(Constantes.IDLOGIN) && RedisCache.getInstance().exist(jsonRequest.get(Constantes.IDLOGIN).getAsString(), 1)) {
-                usuario = (Usuario) RedisCache.getInstance().getValue(jsonRequest.get(Constantes.IDLOGIN).getAsString(), 1);
-                //Es muy complicado que en 1 hora se cambie de ip global tan rapido
-                if(!usuario.getIp().equals(ipAddress)){ usuario = null; }
+            if (jsonRequest.has(Constantes.IDLOGIN)) {
+                if (RedisCache.getInstance().exist(jsonRequest.get(Constantes.IDLOGIN).getAsString(), 1)) {
+                    usuario = (Usuario) RedisCache.getInstance().getValue(jsonRequest.get(Constantes.IDLOGIN).getAsString(), 1);
+                    //Es muy complicado que en 1 hora se cambie de ip global tan rapido
+                    if (!usuario.getIp().equals(ipAddress)) {
+                        usuario = null;
+                    }
+                } else if (!jsonRequest.has("Metodo")) {
+                    jsonResponse.addProperty(Constantes.STATUS, Constantes.KO);
+                    jsonResponse.addProperty(Constantes.STATUSMSG, Error.ID_EXPIRED.getCode());
+                }
             }
             //envias la request y recibes la response
-            jsonResponse = enviarPeticion(jsonRequest, jsonResponse, usuario, ipAddress);
-
+            if(jsonRequest.has("Metodo")) {
+                jsonResponse = enviarPeticion(jsonRequest, jsonResponse, usuario, ipAddress);
+            }
             PrintWriter out = response.getWriter();
             response.setContentType("application/json;charset=UTF-8");
 

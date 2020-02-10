@@ -26,7 +26,7 @@ public class UsuarioController {
             RedisCache.getInstance().delValue(json.get("IdLogin").getAsString(),1);
             respuesta.addProperty(Constantes.STATUS, Constantes.OK);
         }else{
-            Usuario usuario = usuarioService.login(json.get(Constantes.EMAIL).getAsString(), LimpiezaValidacion.validPassword(json.get(Constantes.PASSWORD).getAsString()));
+            Usuario usuario = usuarioService.login(json.get(Constantes.EMAIL).getAsString(), json.get(Constantes.PASSWORD).getAsString());
             if (usuario == null) {
                 respuesta.addProperty(Constantes.STATUS, Constantes.KO);
                 respuesta.addProperty(Constantes.STATUSMSG, Error.USUARIO_NOT_EXIST.getCode());

@@ -32,16 +32,16 @@ public class BuscadorController {
     }
 
     public static JsonObject procesarPeticion(JsonObject datos, Usuario usuario) throws DataException {
-        JsonObject json = datos.get("Entrada").getAsJsonObject();
+        JsonObject json = new JsonObject();
+        if(datos.has("Entrada"))json = datos.get("Entrada").getAsJsonObject();
         String idiomaWeb = datos.get("IdiomaWeb").getAsString();
         JsonObject respuesta = new JsonObject();
         JuegoCriteria juegoCriteria = new JuegoCriteria();
 
         // Recuperar parametros
         String nombre = json.has(Constantes.NOMBRE) ? json.get(Constantes.NOMBRE).getAsString() : null;
-        String nombreValido = LimpiezaValidacion.validNombreJuego(nombre);
-        if (nombreValido != null) {
-            juegoCriteria.setNombre(nombreValido);
+        if (nombre != null) {
+            juegoCriteria.setNombre(nombre);
         }
 
         String creador = json.has("Creador") ? json.get("Creador").getAsString() : null;
@@ -76,14 +76,12 @@ public class BuscadorController {
 
         List<Integer> idsJuegos = juegos.stream().map(Juego::getIdJuego).collect(Collectors.toList());
 
-        // Buscar juegos que tiene incluidos en la biblioteca
-        List<Integer> idsJuegosEnBiblioteca = null;
+        // Buscar juegos que tiene incluidos en la biblioteca y setear si existen en ella
         if (usuario != null && !(idsJuegos.isEmpty())) {
-            idsJuegosEnBiblioteca = usuarioService.existsInBiblioteca(usuario.getEmail(), idsJuegos);
-        }
-
-        if (idsJuegosEnBiblioteca != null && !idsJuegosEnBiblioteca.isEmpty()) {
-            respuesta.add("IdsJuegosBiblioteca", new Gson().toJsonTree(idsJuegosEnBiblioteca, new TypeToken<List<Integer>>() {}.getType()).getAsJsonArray());
+            List<Integer> idsJuegosEnBiblioteca = usuarioService.existsInBiblioteca(usuario.getEmail(), idsJuegos);
+            if (idsJuegosEnBiblioteca != null && !idsJuegosEnBiblioteca.isEmpty()) {
+                juegos.forEach(juego -> {if(idsJuegosEnBiblioteca.contains(juego.getIdJuego())){juego.setExisteEnBiblioteca(true);}});
+            }
         }
 
         respuesta.add("JuegosSearch", new Gson().toJsonTree(juegos, new TypeToken<List<Juego>>() {}.getType()).getAsJsonArray());
